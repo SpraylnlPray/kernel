@@ -6,6 +6,16 @@ extern no_interrupt_handler
 global idt_load
 global int21h
 global no_interrupt
+global enable_interrupts
+global disable_interrupts
+
+disable_interrupts:
+    cli
+    ret
+
+enable_interrupts:
+    sti
+    ret
 
 idt_load:
     push ebp
