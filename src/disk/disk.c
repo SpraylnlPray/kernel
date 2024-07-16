@@ -43,6 +43,8 @@ void disk_search_and_init()
     memset(&disk, 0, sizeof(disk));
     disk.type = DANOS_DISK_TYPE_REAL;
     disk.sector_size = DANOS_SECTOR_SIZE;
+    // in a better implementation we would search for a free index and assign that, for now we assign it directly
+    disk.id = 0;
     disk.filesystem = fs_resolve(&disk);
 }
 

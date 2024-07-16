@@ -6,5 +6,6 @@
 #define DANOS_EINVARG 2
 #define DANOS_ENOMEM 3
 #define DANOS_EBADPATH 4
+#define DANOS_EFSNOTUS 5
 
 #endif
