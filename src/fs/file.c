@@ -180,5 +180,5 @@ out:
     // fopen should return 0 if it fails
     if (res < 0)
         res = 0;
-    return -DANOS_EIO;
+    return res;
 }

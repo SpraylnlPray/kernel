@@ -6,7 +6,7 @@
 
 #define DANOS_MAX_PATH 108
 
-#define ERRO(x) (void*)(x)
+#define ERROR(x) (void*)(x)
 #define ERROR_I(x) (int)(x)
 #define ISERR(x) ((int)(x) < 0)
 

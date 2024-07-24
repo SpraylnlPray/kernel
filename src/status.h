@@ -7,5 +7,6 @@
 #define DANOS_ENOMEM 3
 #define DANOS_EBADPATH 4
 #define DANOS_EFSNOTUS 5
+#define DANOS_ERDONLY 6 // Error Read only
 
 #endif
