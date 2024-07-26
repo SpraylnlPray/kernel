@@ -220,3 +220,19 @@ int fread(void* ptr, uint32_t size, uint32_t nmemb, int fd)
 out:
     return res;
 }
+
+int fstat(int fd, struct file_stat* stat)
+{
+    int res = 0;
+    struct file_descriptor* desc = file_get_descriptor(fd);
+    if (!desc)
+    {
+        res = -DANOS_EIO;
+        goto out;
+    }
+
+    res = desc->filesystem->stat(desc->disk, desc->private_data, stat);
+
+out:
+    return res;
+}
