@@ -1,7 +1,7 @@
-FILES := ./build/kernel.asm.o ./build/gdt/gdt.o ./build/gdt/gdt.asm.o ./build/kernel.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/disk/streamer.o ./build/fs/pparser.o ./build/fs/file.o ./build/string/string.o ./build/fs/fat/fat16.o
+FILES := ./build/kernel.asm.o ./build/gdt/gdt.o ./build/task/task.o ./build/gdt/gdt.asm.o ./build/kernel.o ./build/task/tss.asm.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/disk/streamer.o ./build/fs/pparser.o ./build/fs/file.o ./build/string/string.o ./build/fs/fat/fat16.o
 INCLUDES := -I./src
 FLAGS := -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
-BUILD_DIRS := ./build ./build/idt ./build/memory ./build/io ./build/memory/heap ./build/memory/paging ./build/disk ./build/fs ./build/fs/fat ./build/string ./build/gdt
+BUILD_DIRS := ./build ./build/idt ./build/memory ./build/io ./build/task ./build/memory/heap ./build/memory/paging ./build/disk ./build/fs ./build/fs/fat ./build/string ./build/gdt
 BIN_DIRS := ./bin
 
 export PREFIX := $(HOME)/opt/cross
@@ -84,6 +84,16 @@ $(BIN_DIRS):
 ./build/io/io.asm.o: ./src/io/io.asm
 	@echo "$@ start"
 	nasm -f elf -g ./src/io/io.asm -o ./build/io/io.asm.o
+	@echo "$@ finished"
+
+./build/task/tss.asm.o: ./src/task/tss.asm
+	@echo "$@ start"
+	nasm -f elf -g ./src/task/tss.asm -o ./build/task/tss.asm.o
+	@echo "$@ finished"
+
+./build/task/task.o: ./src/task/task.c
+	@echo "$@ start"
+	i686-elf-gcc ${INCLUDES} -I./src/task ${FLAGS} -std=gnu99 -c ./src/task/task.c -o ./build/task/task.o
 	@echo "$@ finished"
 
 ./build/memory/heap/heap.o: ./src/memory/heap/heap.c

@@ -11,6 +11,7 @@
 #include "gdt/gdt.h"
 #include "config.h"
 #include "memory/memory.h"
+#include "task/tss.h"
 
 #include <stdint.h>
 #include <stddef.h>
@@ -82,11 +83,16 @@ void panic(const char* msg)
     while(1) {}
 }
 
+struct tss tss;
+
 struct gdt gdt_real[DANOS_TOTAL_GDT_SEGMENTS];
 struct gdt_structured gdt_structured[DANOS_TOTAL_GDT_SEGMENTS] = {
     {.base = 0x00, .limit = 0x00, .type = 0x00 },             // NULL Segment
     {.base = 0x00, .limit = 0xffffffff, .type = 0x9a },       // Kernel code segment
     {.base = 0x00, .limit = 0xffffffff, .type = 0x92 },       // Kernel data segment
+    {.base = 0x00, .limit = 0xffffffff, .type = 0xf8 },       // User code segment
+    {.base = 0x00, .limit = 0xffffffff, .type = 0xf2 },       // User data segment
+    {.base = (uint32_t)&tss, .limit = sizeof(tss), .type = 0xe9 }, // TSS Segment
 };
 
 void kernel_main()
@@ -110,6 +116,14 @@ void kernel_main()
 
     // Initialize the interrupt descriptor table
     idt_init();
+
+    // Setup the TSS
+    memset(&tss, 0x00, sizeof(tss));
+    tss.esp0 = 0x600000; // Where kernel stack is located, when we go from userland to kernel land, sp is changed to this
+    tss.ss0 = KERNEL_DATA_SELECTOR;
+
+    // Load TSS
+    tss_load(0x28); // Is offset in gdt_real
 
     // Setup paging
     kernel_chunk = paging_new_4gb(PAGING_IS_WRITEABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
