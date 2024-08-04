@@ -20,10 +20,17 @@
 #define DANOS_TOTAL_GDT_SEGMENTS 6
 
 #define DANOS_PROGRAM_VIRTUAL_ADDRESS 0x400000
-#define USER_DATA_SEGMENT 0x23 // based on offsets in gdt table in kernel.c
 #define DANOS_PROGRAM_VIRTUAL_STACK_ADDRESS_START 0x3FF000 // Is a virtual address!
 #define DANOS_USER_PROGRAM_STACK_SIZE 1024 * 16
 #define DANOS_PROGRAMM_VIRTUAL_STACK_ADDRESS_END DANOS_PROGRAM_VIRTUAL_STACK_ADDRESS_START - DANOS_USER_PROGRAM_STACK_SIZE
+
+#define USER_DATA_SEGMENT 0x23 // based on offsets in gdt table in kernel.c
 #define USER_CODE_SEGMENT 0x1b // based on offsets in gdt table in kernel.c
+
+#define DANOS_MAX_PATH 108
+
+#define DANOS_MAX_PROGRAMM_ALLOCATIONS 1024
+
+#define DANOS_MAX_PROCESSES 12
 
 #endif

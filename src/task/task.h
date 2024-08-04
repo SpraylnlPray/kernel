@@ -31,7 +31,7 @@ struct task
     /**
      * The page directory of the task
      */
-    struct paging_4gb_chunk* page_direcotry;
+    struct paging_4gb_chunk* page_directory;
 
     // The registers of the task when the task is not running
     struct registers registers;
