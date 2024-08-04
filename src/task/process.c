@@ -1,11 +1,11 @@
 #include "process.h"
 #include "memory/memory.h"
 #include "status.h"
-#include "heap/kheap.h"
+#include "memory/heap/kheap.h"
 #include "fs/file.h"
 #include "string/string.h"
 #include "kernel.h"
-#include "paging/paging.h"
+#include "memory/paging/paging.h"
 
 // Currently running process
 struct process* current_process = 0;
@@ -22,10 +22,10 @@ struct process* process_current()
     return current_process;
 }
 
-int process_get(int process_id)
+struct process* process_get(int process_id)
 {
     if (process_id < 0 || process_id >= DANOS_MAX_PROCESSES)
-        return -DANOS_EINVARG;
+        return NULL;
 
     return processes[process_id];
 }
@@ -80,6 +80,7 @@ int process_map_binary(struct process* process)
 {
     int res = 0;
 
+    // We're giving the user programm access to the memory area that we allocated in process_load_for_slot using kzalloc, using 0x400000
     paging_map_to(process->task->page_directory->directory_entry, (void*) DANOS_PROGRAM_VIRTUAL_ADDRESS, process->ptr, paging_align_address(process->ptr + process->size), PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL | PAGING_IS_WRITEABLE);
 
     return res;
@@ -89,6 +90,36 @@ int process_map_memory(struct process* process)
 {
     int res = 0;
     res = process_map_binary(process);
+    return res;
+}
+
+int process_get_free_slot()
+{
+    for (int i = 0; i < DANOS_MAX_PROCESSES; i++)
+    {
+        if (processes[i] == 0)
+        {
+            return i;
+        }
+    }
+
+    return -DANOS_EISTKN;
+}
+
+int process_load(const char* filename, struct process** process)
+{
+    int res = 0;
+
+    int process_slot = process_get_free_slot();
+    if (process_slot < 0)
+    {
+        res = -DANOS_EISTKN;
+        goto out;
+    }
+
+    res = process_load_for_slot(filename, process, process_slot);
+
+out:
     return res;
 }
 
@@ -126,7 +157,7 @@ int process_load_for_slot(const char* filename, struct process** process, int pr
         goto out;
     }
 
-    strncopy(_process->filename, filename, sizeof(_process->filename));
+    strncpy(_process->filename, filename, sizeof(_process->filename));
     _process->stack = programm_stack_ptr;
     _process->id = process_slot;
 
@@ -139,7 +170,7 @@ int process_load_for_slot(const char* filename, struct process** process, int pr
 
     _process->task = task;
 
-    res = process_map_memory(process);
+    res = process_map_memory(_process);
     if (res < 0)
     {
         goto out;

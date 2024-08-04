@@ -11,14 +11,14 @@ struct task* current_task = 0;
 struct task* task_tail = 0;
 struct task* task_head = 0;
 
-int task_init(struct task* task);
+int task_init(struct task* task, struct process* process);
 
 struct task* task_current()
 {
     return current_task;
 }
 
-struct task* task_new()
+struct task* task_new(struct process* process)
 {
     int res = 0;
 
@@ -29,7 +29,7 @@ struct task* task_new()
         goto out;
     }
 
-    res = task_init(task);
+    res = task_init(task, process);
     if (res != DANOS_ALL_OK)
     {
         goto out;
@@ -91,7 +91,7 @@ static void task_list_remove(struct task* task)
 
 int task_free(struct task* task)
 {
-    paging_free_4gb(task->page_direcotry);
+    paging_free_4gb(task->page_directory);
     task_list_remove(task);
 
     // Finally free the task data
@@ -99,18 +99,20 @@ int task_free(struct task* task)
     return 0;
 }
 
-int task_init(struct task* task)
+int task_init(struct task* task, struct process* process)
 {
     memset(task, 0x00, sizeof(struct task));
     // Map entire 4GB address space to itself
-    task->page_direcotry = paging_new_4gb(PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    task->page_directory = paging_new_4gb(PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
 
-    if (!task->page_direcotry)
+    if (!task->page_directory)
         return -DANOS_EIO;
 
     task->registers.ip = DANOS_PROGRAM_VIRTUAL_ADDRESS;
     task->registers.ss = USER_DATA_SEGMENT;
     task->registers.esp = DANOS_PROGRAM_VIRTUAL_STACK_ADDRESS_START;
+
+    task->process = process;
 
     return 0;
 }
