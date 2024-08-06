@@ -13,6 +13,10 @@ struct task* task_get_next();
 int task_free(struct task* task);
 
 int task_init(struct task* task, struct process* process);
+int task_switch(struct task* task);
+int task_page();
+
+void task_run_first_ever_task();
 
 struct registers
 {
@@ -51,5 +55,9 @@ struct task
     // Previous task in linked list
     struct task* prev;
 };
+
+void restore_general_purpose_registers(struct registers* regs);
+void task_return(struct registers* regs); // will drop us into userland
+void user_registers();
 
 #endif
