@@ -8,9 +8,9 @@ export PREFIX := $(HOME)/opt/cross
 export TARGET := i686-elf
 export PATH := $(PREFIX)/bin:$(PATH)
 
-.PHONY: all clean directories
+.PHONY: all clean directories programs
 
-all: directories ./bin/boot.bin ./bin/kernel.bin
+all: directories ./bin/boot.bin ./bin/kernel.bin programs
 	@echo "Make all start"
 	rm -rf ./bin/os.bin 
 	dd if=./bin/boot.bin >> ./bin/os.bin
@@ -156,7 +156,13 @@ $(BIN_DIRS):
 	i686-elf-gcc ${INCLUDES} -I./src/fs -I./src/fs/fat ${FLAGS} -std=gnu99 -c ./src/fs/fat/fat16.c -o ./build/fs/fat/fat16.o
 	@echo "$@ finished"
 
-clean:
+programs:
+	cd ./programs/blank && $(MAKE) all
+
+programs_clean:
+	cd ./programs/blank && $(MAKE) clean
+
+clean: programs_clean
 	@echo "$@ start"
 	rm -rf ./bin
 	rm -rf ${FILES}
