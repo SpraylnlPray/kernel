@@ -124,13 +124,13 @@ int paging_map_to(uint32_t* directory, void* virt, void* phys, void* phys_end, i
         goto out;
     }
 
-    if ((uint32_t)phys_end & PAGING_PAGE_SIZE)
+    if ((uint32_t)phys_end % PAGING_PAGE_SIZE)
     {
         res = -DANOS_EINVARG;
         goto out;
     }
 
-    if ((uint32_t)phys < (uint32_t)phys)
+    if ((uint32_t)phys_end < (uint32_t)phys)
     {
         res = -DANOS_EINVARG;
         goto out;
