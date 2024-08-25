@@ -6,6 +6,7 @@
 #include "process.h"
 
 struct process;
+struct interrupt_frame;
 
 struct task* task_new(struct process* process);
 struct task* task_current();
@@ -59,5 +60,6 @@ struct task
 void restore_general_purpose_registers(struct registers* regs);
 void task_return(struct registers* regs); // will drop us into userland
 void user_registers();
+void task_current_save_state(struct interrupt_frame *frame);
 
 #endif

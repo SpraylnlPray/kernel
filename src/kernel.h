@@ -9,6 +9,8 @@
 #define ISERR(x) ((int)(x) < 0)
 
 void kernel_main();
+void kernel_page();
+void kernel_registers();
 void print(const char *str);
 void panic(const char* msg);
 
