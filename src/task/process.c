@@ -81,7 +81,7 @@ int process_map_binary(struct process* process)
     int res = 0;
 
     // We're giving the user programm access to the memory area that we allocated in process_load_for_slot using kzalloc, using 0x400000
-    paging_map_to(process->task->page_directory->directory_entry, (void*) DANOS_PROGRAM_VIRTUAL_ADDRESS, process->ptr, paging_align_address(process->ptr + process->size), PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL | PAGING_IS_WRITEABLE);
+    paging_map_to(process->task->page_directory, (void*) DANOS_PROGRAM_VIRTUAL_ADDRESS, process->ptr, paging_align_address(process->ptr + process->size), PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL | PAGING_IS_WRITEABLE);
 
     return res;
 }
