@@ -15,6 +15,7 @@
 #include "task/task.h"
 #include "task/process.h"
 #include "status.h"
+#include "isr80h/isr80h.h"
 
 #include <stdint.h>
 #include <stddef.h>
@@ -142,6 +143,9 @@ void kernel_main()
 
     // Enable paging
     enable_paging();
+
+    // Register kernel commands
+    isr80h_register_commands();
 
     struct process* process = 0;
     int res = process_load("0:/blank.bin", &process);
