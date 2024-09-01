@@ -3,7 +3,9 @@
 #include "status.h"
 #include "memory/heap/kheap.h"
 #include "memory/memory.h"
+#include "memory/paging/paging.h"
 #include "idt/idt.h"
+#include "string/string.h"
 
 // Currently running task
 struct task *current_task = 0;
@@ -135,11 +137,57 @@ void task_current_save_state(struct interrupt_frame *frame)
     task_save_state(task, frame);
 }
 
+int copy_string_from_task(struct task* task, void* virtual, void* phys, int max)
+{
+    if (max >= PAGING_PAGE_SIZE)
+    {
+        return -DANOS_EINVARG;
+    }
+
+    int res = 0;
+
+    char* tmp = kzalloc(max);
+    if (!tmp)
+    {
+        res = -DANOS_ENOMEM;
+        goto out;
+    }
+
+    uint32_t* task_directory = task->page_directory->directory_entry;
+    uint32_t old_entry = paging_get(task_directory, tmp);
+    paging_map(task->page_directory, tmp, tmp, PAGING_IS_WRITEABLE | PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
+    paging_switch(task->page_directory);
+    strncpy(tmp, virtual, max);
+    kernel_page();
+
+    res = paging_set(task_directory, tmp, old_entry);
+    if (res < 0)
+    {
+        res = -DANOS_EIO;
+        goto out_free;
+    }
+
+    strncpy(phys, tmp, max);
+
+out_free:
+    kfree(tmp);
+
+out:
+    return res;
+}
+
 // Takes us from kernel page to task page
 int task_page()
 {
     user_registers();
     task_switch(current_task);
+    return 0;
+}
+
+int task_page_task(struct task* task)
+{
+    user_registers();
+    paging_switch(task->page_directory);
     return 0;
 }
 
@@ -171,4 +219,21 @@ int task_init(struct task *task, struct process *process)
     task->process = process;
 
     return 0;
+}
+
+void* task_get_stack_item(struct task* task, int index)
+{
+    void* result = 0;
+
+    uint32_t* sp_ptr = (uint32_t*) task->registers.esp;
+
+    // Switch to the given tasks page
+    task_page_task(task);
+
+    result = (void*) sp_ptr[index];
+
+    // Switch back to the kernel page
+    kernel_page();
+
+    return result;
 }
