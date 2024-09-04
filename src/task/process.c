@@ -14,7 +14,7 @@ static struct process* processes[DANOS_MAX_PROCESSES] = {};
 
 static void process_init(struct process* process)
 {
-    memset(process, 0x00, sizeof(struct process));
+    memset(process, 0, sizeof(struct process));
 }
 
 struct process* process_current()

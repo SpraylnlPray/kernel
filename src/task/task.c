@@ -119,10 +119,10 @@ void task_save_state(struct task *task, struct interrupt_frame *frame)
     task->registers.ss = frame->ss;
     task->registers.eax = frame->eax;
     task->registers.ebp = frame->ebp;
-    task->registers.ebx = frame->ebp;
+    task->registers.ebx = frame->ebx;
     task->registers.ecx = frame->ecx;
     task->registers.edi = frame->edi;
-    task->registers.edi = frame->edx;
+    task->registers.edx = frame->edx;
     task->registers.esi = frame->esi;
 }
 
@@ -145,7 +145,6 @@ int copy_string_from_task(struct task* task, void* virtual, void* phys, int max)
     }
 
     int res = 0;
-
     char* tmp = kzalloc(max);
     if (!tmp)
     {
@@ -204,7 +203,7 @@ void task_run_first_ever_task()
 
 int task_init(struct task *task, struct process *process)
 {
-    memset(task, 0x00, sizeof(struct task));
+    memset(task, 0, sizeof(struct task));
     // Map entire 4GB address space to itself
     task->page_directory = paging_new_4gb(PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL);
 
