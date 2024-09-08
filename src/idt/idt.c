@@ -5,12 +5,14 @@
 #include "io/io.h"
 #include "task/task.h"
 #include "config.h"
+#include "status.h"
 
 extern void* interrupt_pointer_table[DANOS_TOTAL_INTERRUPTS];
 
 struct idt_desc idt_descriptors[DANOS_TOTAL_INTERRUPTS];
 struct idtr_desc idtr_descriptor;
 
+static INTERRUPT_CALLBACK_FUNCTION interrupt_callbacks[DANOS_TOTAL_INTERRUPTS];
 static ISR80H_COMMMAND isr80h_commands[DANOS_MAX_ISR80H_COMMANDS];
 
 extern void idt_load(struct idtr_desc *ptr);
@@ -24,6 +26,13 @@ void no_interrupt_handler()
 
 void interrupt_handler(int interrupt, struct interrupt_frame* frame)
 {
+    if (interrupt_callbacks[interrupt] != 0)
+    {
+        kernel_page();
+        task_current_save_state(frame);
+        interrupt_callbacks[interrupt](frame);
+        task_page();
+    }
 
     outb(0x20, 0x20); // Acknowledgement for interrupt controller
 }
@@ -59,6 +68,22 @@ void idt_init()
 
     // Load the interrupt descriptor table
     idt_load(&idtr_descriptor);
+}
+
+int idt_register_interrupt_callback(int interrupt, INTERRUPT_CALLBACK_FUNCTION interrupt_callback)
+{
+    if (interrupt < 0 || interrupt >= DANOS_TOTAL_INTERRUPTS)
+    {
+        return -DANOS_EINVARG;
+    }
+
+    if (interrupt_callbacks[interrupt])
+    {
+        panic("You are attemtping to overwrite an existing interrupt calback!\n");
+    }
+
+    interrupt_callbacks[interrupt] = interrupt_callback;
+    return 0;
 }
 
 void isr80h_register_command(int command_id, ISR80H_COMMMAND command)
