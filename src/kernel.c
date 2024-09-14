@@ -56,6 +56,11 @@ void terminal_backspace()
 
     terminal_col -= 1;
     terminal_writechar(' ', 15);
+    if(!terminal_col)
+    {
+        terminal_row -= 1;
+        terminal_col = VGA_WIDTH;
+    }
     terminal_col -= 1;
 }
 
