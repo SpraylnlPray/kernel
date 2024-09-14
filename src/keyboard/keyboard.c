@@ -66,6 +66,11 @@ void keyboard_push(char c)
     }
 
     int real_index = keyboard_get_tail_index(process);
+
+    if (real_index != 0)
+    {
+        process->keyboard.buffer[real_index] = c;
+    }
     process->keyboard.buffer[real_index] = c;
     process->keyboard.tail++;
 }
