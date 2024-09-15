@@ -20,7 +20,7 @@ all: directories ./bin/boot.bin ./bin/kernel.bin programs
 	sudo mount -t vfat ./bin/os.bin /mnt/d
 	# Copy a file over
 	sudo cp ./hello.txt /mnt/d
-	sudo cp ./programs/blank/blank.bin /mnt/d
+	sudo cp ./programs/blank/blank.elf /mnt/d
 	sudo umount /mnt/d
 	@echo "Make all finished"
 
