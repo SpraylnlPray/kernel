@@ -10,5 +10,6 @@
 #define DANOS_ERDONLY 6 // Error Read only
 #define DANOS_EUNIMP 7 // unimplemented
 #define DANOS_EISTKN 8 // is taken
+#define DANOS_EINFORMAT 9
 
 #endif
