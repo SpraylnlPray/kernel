@@ -193,9 +193,11 @@ $(BIN_DIRS):
 	@echo "$@ finished"
 
 programs:
+	cd ./programs/stdlib && $(MAKE) all
 	cd ./programs/blank && $(MAKE) all
 
 programs_clean:
+	cd ./programs/stdlib && $(MAKE) all
 	cd ./programs/blank && $(MAKE) clean
 
 clean: programs_clean
