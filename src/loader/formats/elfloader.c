@@ -102,6 +102,11 @@ int elf_validate_loaded(struct elf_header* header)
     return (elf_valid_signature(header) && elf_valid_class(header) && elf_valid_encoding(header) && elf_has_program_header(header)) ? DANOS_ALL_OK : -DANOS_EINFORMAT;
 }
 
+void* elf_phdr_phys_address(struct elf_file* file, struct elf32_phdr* phdr)
+{
+    return elf_memory(file) + phdr->p_offset;
+}
+
 int elf_process_phdr_pt_load(struct elf_file* elf_file, struct elf32_phdr* phdr)
 {
     if (elf_file->virtual_base_address >= (void*) phdr->p_vaddr || elf_file->virtual_base_address == 0x00)
