@@ -1,4 +1,4 @@
-FILES=./build/start.o 
+FILES=./build/start.o ./build/danos.o
 INCLUDES=
 BUILD_DIRS := ./build
 
@@ -8,6 +8,11 @@ all: directories ${FILES}
 ./build/start.o: ./src/start.asm
 	@echo "$@ start"
 	nasm -f elf ./src/start.asm -o ./build/start.o
+	@echo "$@ finished"
+
+./build/danos.o: ./src/danos.asm
+	@echo "$@ start"
+	nasm -f elf ./src/danos.asm -o ./build/danos.o
 	@echo "$@ finished"
 
 clean:

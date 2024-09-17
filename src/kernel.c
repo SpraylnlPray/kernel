@@ -138,7 +138,6 @@ struct gdt_structured gdt_structured[DANOS_TOTAL_GDT_SEGMENTS] = {
 void kernel_main()
 {
     terminal_init();
-    print("Hello world\n");
 
     memset(gdt_real, 0x00, sizeof(gdt_real));
     gdt_structured_to_gdt(gdt_real, gdt_structured, DANOS_TOTAL_GDT_SEGMENTS);
