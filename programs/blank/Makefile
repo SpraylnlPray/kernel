@@ -1,6 +1,7 @@
 FILES=./build/blank.o 
 INCLUDES= -I../stdlib/src
-BUILD_DIRS := ./build
+BUILD_DIRS= ./build
+FLAGS= -g
 
 all: directories ${FILES}
 	@echo "$@ start"
@@ -9,7 +10,7 @@ all: directories ${FILES}
 
 ./build/blank.o: ./blank.c
 	@echo "$@ start"
-	i686-elf-gcc ${INCLUDES} -I./${FLAGS} -std=gnu99 -c ./blank.c -o ./build/blank.o
+	i686-elf-gcc ${INCLUDES} -I./ ${FLAGS} -std=gnu99 -c ./blank.c -o ./build/blank.o
 	@echo "$@ finished"
 
 clean:

@@ -1,4 +1,4 @@
-FILES := ./build/kernel.asm.o ./build/gdt/gdt.o ./build/loader/formats/elf.o ./build/loader/formats/elfloader.o ./build/isr80h/misc.o ./build/isr80h/io.o ./build/keyboard/classic.o ./build/keyboard/keyboard.o ./build/isr80h/isr80h.o ./build/task/task.o ./build/task/task.asm.o ./build/task/process.o ./build/gdt/gdt.asm.o ./build/kernel.o ./build/task/tss.asm.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/disk/streamer.o ./build/fs/pparser.o ./build/fs/file.o ./build/string/string.o ./build/fs/fat/fat16.o
+FILES := ./build/kernel.asm.o ./build/gdt/gdt.o ./build/loader/formats/elf.o ./build/loader/formats/elfloader.o ./build/isr80h/misc.o ./build/isr80h/io.o ./build/keyboard/classic.o ./build/keyboard/keyboard.o ./build/isr80h/isr80h.o ./build/isr80h/heap.o  ./build/task/task.o ./build/task/task.asm.o ./build/task/process.o ./build/gdt/gdt.asm.o ./build/kernel.o ./build/task/tss.asm.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/disk/streamer.o ./build/fs/pparser.o ./build/fs/file.o ./build/string/string.o ./build/fs/fat/fat16.o
 INCLUDES := -I./src
 FLAGS := -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
 BUILD_DIRS := ./build ./build/loader ./build/loader/formats ./build/idt ./build/memory ./build/io ./build/isr80h ./build/task ./build/memory/heap ./build/memory/paging ./build/disk ./build/fs ./build/fs/fat ./build/string ./build/gdt ./build/keyboard
@@ -70,6 +70,11 @@ $(BIN_DIRS):
 ./build/isr80h/isr80h.o: ./src/isr80h/isr80h.c
 	@echo "$@ start"
 	i686-elf-gcc ${INCLUDES} -I./src/isr80h -I./src ${FLAGS} -std=gnu99 -c ./src/isr80h/isr80h.c -o ./build/isr80h/isr80h.o
+	@echo "$@ finished"
+
+./build/isr80h/heap.o: ./src/isr80h/heap.c
+	@echo "$@ start"
+	i686-elf-gcc ${INCLUDES} -I./src/isr80h -I./src ${FLAGS} -std=gnu99 -c ./src/isr80h/heap.c -o ./build/isr80h/heap.o
 	@echo "$@ finished"
 
 ./build/isr80h/misc.o: ./src/isr80h/misc.c

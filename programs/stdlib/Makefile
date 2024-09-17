@@ -1,6 +1,7 @@
-FILES=./build/start.o ./build/danos.o
+FILES=./build/start.o ./build/danos.o ./build/stdlib.o
 INCLUDES=
-BUILD_DIRS := ./build
+BUILD_DIRS= ./build
+FLAGS= -g
 
 all: directories ${FILES}
 	i686-elf-ld -m elf_i386 -relocatable ${FILES} -o ./stdlib.elf
@@ -13,6 +14,11 @@ all: directories ${FILES}
 ./build/danos.o: ./src/danos.asm
 	@echo "$@ start"
 	nasm -f elf ./src/danos.asm -o ./build/danos.o
+	@echo "$@ finished"
+
+./build/stdlib.o: ./src/stdlib.c
+	@echo "$@ start"
+	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/stdlib.c -o ./build/stdlib.o
 	@echo "$@ finished"
 
 clean:
