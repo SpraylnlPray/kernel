@@ -8,5 +8,5 @@ void* malloc(size_t size)
 
 void free(void* ptr)
 {
-    return 0;
+    return danos_free(ptr);
 }

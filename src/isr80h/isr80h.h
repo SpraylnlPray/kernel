@@ -8,6 +8,7 @@ enum SystemCommands
     SYSTEM_COMMAND2_GETKEY,
     SYSTEM_COMMMAND3_PUTCHAR,
     SYSTEM_COMMAND4_MALLOC,
+    SYSTEM_COMMAND5_FREE,
 };
 
 void isr80h_register_commands();

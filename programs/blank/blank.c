@@ -6,10 +6,9 @@ int main(int arg, char** argv)
     print("Hello how are you!\n");
 
     void* ptr = malloc(512);
-    if (ptr)
-    {
-        
-    }
+    free(ptr);
+    ptr = malloc(512);
+    void* ptr2 = malloc(512);
 
     while(1)
     {
