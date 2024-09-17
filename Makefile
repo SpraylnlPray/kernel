@@ -197,7 +197,7 @@ programs:
 	cd ./programs/blank && $(MAKE) all
 
 programs_clean:
-	cd ./programs/stdlib && $(MAKE) all
+	cd ./programs/stdlib && $(MAKE) clean
 	cd ./programs/blank && $(MAKE) clean
 
 clean: programs_clean
