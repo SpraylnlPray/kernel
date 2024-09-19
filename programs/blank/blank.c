@@ -4,6 +4,7 @@
 
 int main(int arg, char** argv)
 {
+    printf("My age is %i\n", 27);
     print("Hello how are you!\n");
 
     print(itoa(8763));
@@ -14,6 +15,7 @@ int main(int arg, char** argv)
     free(ptr);
     ptr = malloc(512);
     void* ptr2 = malloc(512);
+    free(ptr2);
 
     while(1)
     {
