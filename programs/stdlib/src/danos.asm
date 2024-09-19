@@ -6,6 +6,7 @@ global print:function
 global getkey:function
 global danos_malloc:function
 global danos_free:function
+global danos_putchar:function
 
 ; void print(const char* message)
 print:
@@ -24,10 +25,23 @@ print:
 ; int getkey()
 getkey:
     push ebp
-
     mov ebp, esp
+
     mov eax, 2 ; Command getkey
     int 0x80
+
+    pop ebp
+    ret
+
+; void danos_putchar(char c)
+danos_putchar:
+    push ebp,
+    mov ebp, esp
+
+    mov eax, 3 ; Command putchar
+    push dword [ebp + 8] ; Variable "c"
+    int 0x80
+    add esp, 4
 
     pop ebp
     ret

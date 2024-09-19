@@ -1,5 +1,5 @@
-#ifndef STDLIB_H
-#define STDLIB_H
+#ifndef DANOS_STDLIB_H
+#define DANOS_STDLIB_H
 
 #include <stddef.h>
 

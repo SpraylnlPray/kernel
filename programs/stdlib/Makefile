@@ -1,4 +1,4 @@
-FILES=./build/start.o ./build/danos.o ./build/stdlib.o
+FILES=./build/start.o ./build/danos.o ./build/stdlib.o ./build/stdio.o
 INCLUDES=
 BUILD_DIRS= ./build
 FLAGS= -g
@@ -19,6 +19,11 @@ all: directories ${FILES}
 ./build/stdlib.o: ./src/stdlib.c
 	@echo "$@ start"
 	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/stdlib.c -o ./build/stdlib.o
+	@echo "$@ finished"
+
+./build/stdio.o: ./src/stdio.c
+	@echo "$@ start"
+	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/stdio.c -o ./build/stdio.o
 	@echo "$@ finished"
 
 clean:
