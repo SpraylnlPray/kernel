@@ -5,15 +5,13 @@
 
 int main(int arg, char** argv)
 {
-    char words[] = "hello how are you";
-    const char* token = strtok(words, " ");
-    while(token)
-    {
-        printf("%s\n", token);
-        token = strtok(NULL, " ");
-    }
-    printf("My age is %i\n", 27);
-    
+    char* ptr = malloc(20);
+    strcpy(ptr, "hello world");
+    print(ptr);
+    free(ptr);
+
+    ptr[0] = 'B';
+    print("abc\n");
 
     while(1)
     {
