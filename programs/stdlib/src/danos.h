@@ -11,5 +11,6 @@ void danos_free(void* ptr);
 void danos_putchar(char c);
 int danos_getkey_block();
 void danos_terminal_readline(char* out, int max, bool output_while_typing);
+void danos_process_load_start(const char* filename);
 
 #endif

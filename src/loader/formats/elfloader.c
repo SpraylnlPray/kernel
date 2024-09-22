@@ -183,6 +183,7 @@ int elf_load(const char* filename, struct elf_file** file_out)
     int res = fopen(filename, "r");
     if (res <= 0)
     {
+        res = -DANOS_EIO;
         goto out;
     }
 

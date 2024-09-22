@@ -7,6 +7,7 @@ global danos_getkey:function
 global danos_malloc:function
 global danos_free:function
 global danos_putchar:function
+global danos_process_load_start:function
 
 ; void print(const char* message)
 print:
@@ -67,6 +68,20 @@ danos_free:
 
     mov eax, 5 ; Command free
     push dword[ebp + 8] ; Variable "ptr"
+    int 0x80
+
+    add esp, 4
+
+    pop ebp
+    ret
+
+; void danos_process_load_start(const char* filename)
+danos_process_load_start:
+    push ebp
+    mov ebp, esp
+    
+    mov eax, 6 ; Command 6 process load start (starts a process)
+    push dword[ebp + 8] ; Variable "filename"
     int 0x80
 
     add esp, 4
