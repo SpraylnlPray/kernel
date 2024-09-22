@@ -1,4 +1,4 @@
-FILES=./build/start.o ./build/danos.o ./build/stdlib.o ./build/stdio.o
+FILES=./build/start.o ./build/danos.asm.o ./build/stdlib.o ./build/stdio.o ./build/danos.o
 INCLUDES=
 BUILD_DIRS= ./build
 FLAGS= -g -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
@@ -11,9 +11,14 @@ all: directories ${FILES}
 	nasm -f elf ./src/start.asm -o ./build/start.o
 	@echo "$@ finished"
 
-./build/danos.o: ./src/danos.asm
+./build/danos.asm.o: ./src/danos.asm
 	@echo "$@ start"
-	nasm -f elf ./src/danos.asm -o ./build/danos.o
+	nasm -f elf ./src/danos.asm -o ./build/danos.asm.o
+	@echo "$@ finished"
+
+./build/danos.o: ./src/danos.c
+	@echo "$@ start"
+	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/danos.c -o ./build/danos.o
 	@echo "$@ finished"
 
 ./build/stdlib.o: ./src/stdlib.c

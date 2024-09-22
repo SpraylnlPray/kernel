@@ -3,7 +3,7 @@
 section .asm
 
 global print:function
-global getkey:function
+global danos_getkey:function
 global danos_malloc:function
 global danos_free:function
 global danos_putchar:function
@@ -22,8 +22,8 @@ print:
     pop ebp
     ret
 
-; int getkey()
-getkey:
+; int danos_getkey()
+danos_getkey:
     push ebp
     mov ebp, esp
 
