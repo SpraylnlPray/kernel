@@ -10,6 +10,13 @@ struct command_argument
     struct command_argument* next;
 };
 
+
+struct process_arguments
+{
+    int argc;
+    char** argv;
+};
+
 void print(const char* message);
 int danos_getkey();
 void* danos_malloc(size_t size);
@@ -19,5 +26,6 @@ int danos_getkey_block();
 void danos_terminal_readline(char* out, int max, bool output_while_typing);
 void danos_process_load_start(const char* filename);
 struct command_argument* danos_parse_command(const char* command, int max);
+void danos_process_get_arguments(struct process_arguments* arguments);
 
 #endif

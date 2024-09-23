@@ -5,11 +5,10 @@
 
 int main(int arg, char** argv)
 {
-    char str[] = "hello world";
-    struct command_argument* root_command = danos_parse_command(str, sizeof(str));
+    struct process_arguments arguments;
+    danos_process_get_arguments(&arguments);
 
-    printf("%s\n", root_command->argument);
-    printf("%s\n", root_command->next->argument);
+    printf("%i %s\n", arguments.argc, arguments.argv[0]);
 
     while(1)
     {
