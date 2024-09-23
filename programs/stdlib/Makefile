@@ -1,4 +1,4 @@
-FILES=./build/start.o ./build/danos.asm.o ./build/stdlib.o ./build/stdio.o ./build/danos.o ./build/string.o ./build/memory.o
+FILES=./build/start.asm.o ./build/start.o ./build/danos.asm.o ./build/stdlib.o ./build/stdio.o ./build/danos.o ./build/string.o ./build/memory.o
 INCLUDES=
 BUILD_DIRS= ./build
 FLAGS= -g -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
@@ -6,9 +6,9 @@ FLAGS= -g -falign-jumps -falign-functions -falign-labels -falign-loops -fstrengt
 all: directories ${FILES}
 	i686-elf-ld -m elf_i386 -relocatable ${FILES} -o ./stdlib.elf
 
-./build/start.o: ./src/start.asm
+./build/start.asm.o: ./src/start.asm
 	@echo "$@ start"
-	nasm -f elf ./src/start.asm -o ./build/start.o
+	nasm -f elf ./src/start.asm -o ./build/start.asm.o
 	@echo "$@ finished"
 
 ./build/danos.asm.o: ./src/danos.asm
@@ -39,6 +39,11 @@ all: directories ${FILES}
 ./build/memory.o: ./src/memory.c
 	@echo "$@ start"
 	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/memory.c -o ./build/memory.o
+	@echo "$@ finished"
+
+./build/start.o: ./src/start.c
+	@echo "$@ start"
+	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/start.c -o ./build/start.o
 	@echo "$@ finished"
 
 clean:
