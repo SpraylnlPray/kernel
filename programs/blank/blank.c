@@ -5,13 +5,11 @@
 
 int main(int arg, char** argv)
 {
-    char* ptr = malloc(20);
-    strcpy(ptr, "hello world");
-    print(ptr);
-    free(ptr);
+    char str[] = "hello world";
+    struct command_argument* root_command = danos_parse_command(str, sizeof(str));
 
-    ptr[0] = 'B';
-    print("abc\n");
+    printf("%s\n", root_command->argument);
+    printf("%s\n", root_command->next->argument);
 
     while(1)
     {
