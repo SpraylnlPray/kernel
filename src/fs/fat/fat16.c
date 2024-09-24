@@ -219,7 +219,7 @@ int fat16_get_root_directory(struct disk* disk, struct fat_private* fat_private,
 
     int total_items = fat16_get_total_items_for_directory(disk, root_dir_sector_pos);
 
-    struct fat_directory_item* dir = kzalloc(root_dir_size);
+    dir = kzalloc(root_dir_size);
     if (!dir)
     {
         res = -DANOS_ENOMEM;
