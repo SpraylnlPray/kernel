@@ -3,9 +3,12 @@
 #include "stdio.h"
 #include "string.h"
 
-int main(int arg, char** argv)
+int main(int argc, char** argv)
 {
-    print(argv[0]);
+    for (int i = 0; i < argc; i++)
+    {
+        printf("%s\n", argv[i]);
+    }
 
     while(1)
     {

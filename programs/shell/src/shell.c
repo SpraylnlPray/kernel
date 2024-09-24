@@ -11,8 +11,8 @@ int main(int argc, char** argv)
         print("> ");
         char buf[1024];
         danos_terminal_readline(buf, sizeof(buf), true);
-        danos_process_load_start(buf);
         print("\n");
+        danos_system_run(buf);
 
     };
     return 0;
