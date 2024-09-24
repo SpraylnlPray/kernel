@@ -59,6 +59,12 @@ void idt_handle_exception()
     task_next();
 }
 
+void idt_clock()
+{
+    outb(0x20, 0x20); // Acknowledgement for interrupt controller
+    task_next(); // Switch to the next task
+}
+
 void idt_init()
 {
     memset(idt_descriptors, 0, sizeof(idt_descriptors));
@@ -73,15 +79,12 @@ void idt_init()
     idt_set(0, idt_zero);
     idt_set(0x80, isr80h_wrapper);
 
-    // for (int i = 0; i < 0x20; i++) // same interrupt handler for all exceptions at the moment
-    // {
-    //     idt_register_interrupt_callback(i, idt_handle_exception);
-    // }
-
-    for (int i = 0; i < 0x20; i++)
+    for (int i = 0; i < 0x20; i++) // same interrupt handler for all exceptions at the moment
     {
         idt_register_interrupt_callback(i, idt_handle_exception);
     }
+
+    idt_register_interrupt_callback(0x20, idt_clock);
 
     // Load the interrupt descriptor table
     idt_load(&idtr_descriptor);
