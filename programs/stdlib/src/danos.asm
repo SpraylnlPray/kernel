@@ -10,6 +10,7 @@ global danos_putchar:function
 global danos_process_load_start:function
 global danos_process_get_arguments:function
 global danos_system:function
+global danos_exit:function
 
 ; void print(const char* message)
 print:
@@ -115,6 +116,17 @@ danos_process_get_arguments:
     int 0x80
 
     add esp, 4
+
+    pop ebp
+    ret
+
+; void danos_exit()
+danos_exit:
+    push ebp
+    mov ebp, esp
+
+    mov eax, 9 ; Command 9 process exit
+    int 0x80
 
     pop ebp
     ret
