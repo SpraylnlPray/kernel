@@ -467,10 +467,13 @@ int process_free_program_data(struct process* process)
     {
     case PROCESS_FILE_TYPE_BINARY:
         kfree(process->ptr);
+        break;
     case PROCESS_FILE_TYPE_ELF:
         elf_close(process->elf_file);
+        break;
     default:
         res = -DANOS_EINVARG;
+        break;
     }
 
     return res;
@@ -506,12 +509,14 @@ int process_terminate(struct process* process)
     res = process_terminate_allocations(process);
     if (res < 0)
     {
+        print("Error terminating allocations\n");
         goto out;
     }
 
     res = process_free_program_data(process);
     if (res < 0)
     {
+        print("Error freeing program data\n");
         goto out;
     }
     
