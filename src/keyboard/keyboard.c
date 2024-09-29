@@ -52,14 +52,24 @@ void keyboard_backspace(struct process* process)
     process->keyboard.buffer[real_index] = 0x00;
 }
 
-void keyboard_set_capslock(struct keyboard* keyboard, int state)
+void keyboard_set_capslock(struct keyboard* keyboard, KEYBOARD_CAPSLOCK_STATE state)
 {
     keyboard->capslock_state = state;
+}
+
+void keyboard_set_shift(struct keyboard* keyboard, KEYBOARD_SHIFT_STATE state)
+{
+    keyboard->shift_state = state;
 }
 
 KEYBOARD_CAPSLOCK_STATE keyboard_get_capslock(struct keyboard* keyboard)
 {
     return keyboard->capslock_state;
+}
+
+KEYBOARD_SHIFT_STATE keyboard_get_shift(struct keyboard* keyboard)
+{
+    return keyboard->shift_state;
 }
 
 void keyboard_push(char c)
