@@ -21,6 +21,10 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#define DEBUG_TERMINAL \
+    uint16_t* local_row __attribute__((unused)) = &terminal_row; \
+    uint16_t* local_col __attribute__((unused)) = &terminal_col;
+
 uint16_t *video_mem = 0;
 uint16_t terminal_row = 0;
 uint16_t terminal_col = 0;
@@ -64,12 +68,33 @@ void terminal_backspace()
     terminal_col -= 1;
 }
 
+void terminal_tab()
+{
+    for (int i = 0; i < 5; i++)
+    {
+        terminal_putchar(terminal_col, terminal_row, ' ', 15);
+        terminal_col++;
+
+        if (terminal_col >= VGA_WIDTH)
+        {
+            terminal_col = 0;
+            terminal_row += 1;
+        }
+    }
+}
+
 void terminal_writechar(char c, char color)
 {
     if (c == '\n')
     {
         terminal_row += 1;
         terminal_col = 0;
+        return;
+    }
+
+    if (c == '\t')
+    {
+        terminal_tab();
         return;
     }
 
