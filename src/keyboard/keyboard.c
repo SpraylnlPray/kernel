@@ -3,6 +3,7 @@
 #include "kernel.h"
 #include "task/task.h"
 #include "task/process.h"
+#include "string/string.h"
 #include "classic.h"
 
 static struct keyboard* keyboard_list_head = 0;
@@ -38,6 +39,22 @@ int keyboard_insert(struct keyboard* keyboard)
 
 out:
     return res;
+}
+
+void keyboard_get_available_layouts(char** buf)
+{
+    struct keyboard* keyboard = keyboard_list_head;
+    int count = 0;
+    while (keyboard != NULL && count < MAX_KEYBOARD_LAYOUT_COUNT)
+    {
+        for (int i = 0; i < keyboard->layout_count && count < MAX_KEYBOARD_LAYOUT_COUNT; i++, count++)
+        {
+            strncpy(*buf, keyboard->available_layouts[i], sizeof(keyboard->available_layouts[i]));
+            buf++;
+        }
+
+        keyboard = keyboard->next;
+    }
 }
 
 static int keyboard_get_tail_index(struct process* process)

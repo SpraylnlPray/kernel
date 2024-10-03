@@ -11,6 +11,7 @@ global danos_process_load_start:function
 global danos_process_get_arguments:function
 global danos_system:function
 global danos_exit:function
+global danos_get_keyboard_layouts:function
 
 ; void print(const char* message)
 print:
@@ -97,7 +98,7 @@ danos_system:
     push ebp
     mov ebp, esp
     
-    mov eax, 7 ; Command process_system (runs a system command based on the arguments)
+    mov eax, 7 ; Command 7 process_system (runs a system command based on the arguments)
     push dword[ebp + 8] ; Variable "arguments"
     int 0x80
 
@@ -127,6 +128,20 @@ danos_exit:
 
     mov eax, 9 ; Command 9 process exit
     int 0x80
+
+    pop ebp
+    ret
+
+; void* danos_get_keyboard_layouts(char** buf)
+danos_get_keyboard_layouts:
+    push ebp
+    mov ebp, esp
+
+    mov eax, 10 ; Command 10 get keyboard layouts
+    push dword[ebp + 8] ; Variable "buf"
+    int 0x80
+
+    add esp, 4
 
     pop ebp
     ret

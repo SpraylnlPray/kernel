@@ -44,6 +44,8 @@ void classic_keyboard_handle_interrupt();
 struct keyboard classic_keyboard = {
     .name = {"Classic"},
     .init = classic_keyboard_init,
+    .available_layouts = {"en_US", "de_DE"},
+    .layout_count = 2,
 };
 
 int classic_keyboard_init()

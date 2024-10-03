@@ -10,7 +10,6 @@ struct command_argument
     struct command_argument* next;
 };
 
-
 struct process_arguments
 {
     int argc;
@@ -30,5 +29,6 @@ void danos_process_get_arguments(struct process_arguments* arguments);
 int danos_system(struct command_argument* arguments);
 int danos_system_run(const char* command);
 void danos_exit();
+void* danos_get_keyboard_layouts(char** buf);
 
 #endif
