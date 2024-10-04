@@ -62,7 +62,7 @@ void keyboard_get_available_layouts(char** buf, uint32_t size)
     {
         for (int i = 0; i < keyboard->layout_count && count < size; i++, count++)
         {
-            strncpy(*buf, keyboard->available_layouts[i], sizeof(keyboard->available_layouts[i]));
+            strncpy(*buf, keyboard->available_layouts[i]->identifier, sizeof(keyboard->available_layouts[i]->identifier));
             buf++;
         }
 

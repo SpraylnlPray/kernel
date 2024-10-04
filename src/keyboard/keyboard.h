@@ -11,7 +11,7 @@ struct process;
 #define KEYBOARD_SHIFT_ON 1
 #define KEYBOARD_SHIFT_OFF 0
 
-#define MAX_KEYBOARD_LAYOUT_COUNT 20
+#define MAX_KEYBOARD_LAYOUT_COUNT 20 // TODO: Find better solution for this
 #define KEYBOARD_LAYOUT_ID_LENGTH 6 // 5 characters + null terminator
 
 typedef int KEYBOARD_CAPSLOCK_STATE;
@@ -19,6 +19,12 @@ typedef int KEYBOARD_SHIFT_STATE;
 
 typedef int (*KEYBOARD_INIT_FUNCTION)();
 
+struct keyboard_layout
+{
+    char identifier[KEYBOARD_LAYOUT_ID_LENGTH];
+    uint8_t scan_set_default[82];
+    uint8_t scan_set_shift[82];
+};
 
 struct keyboard
 {
@@ -27,7 +33,8 @@ struct keyboard
     struct keyboard* next;
     KEYBOARD_CAPSLOCK_STATE capslock_state;
     KEYBOARD_SHIFT_STATE shift_state;
-    char available_layouts[MAX_KEYBOARD_LAYOUT_COUNT][KEYBOARD_LAYOUT_ID_LENGTH];
+    struct keyboard_layout* available_layouts[MAX_KEYBOARD_LAYOUT_COUNT];
+    struct keyboard_layout* active_layout;
     int layout_count;
 };
 
