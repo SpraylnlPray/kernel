@@ -14,6 +14,7 @@ global danos_exit:function
 global danos_get_keyboard_layouts:function
 global danos_get_keyboard_layout_count:function
 global danos_get_active_keyboard_layout_id:function
+global danos_set_active_keyboard_layout: function
 
 ; void print(const char* message)
 print:
@@ -171,6 +172,20 @@ danos_get_active_keyboard_layout_id:
     int 0x80
 
     add esp, 8
+
+    pop ebp
+    ret
+
+; int danos_set_active_keyboard_layout(char* id)
+danos_set_active_keyboard_layout:
+    push ebp
+    mov ebp, esp
+
+    mov eax, 13 ; Commad 13 set active layout
+    push dword[ebp + 8] ; Variable "id"
+    int 0x80
+
+    add esp, 4
 
     pop ebp
     ret

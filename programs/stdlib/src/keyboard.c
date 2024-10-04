@@ -15,3 +15,8 @@ void get_active_keyboard_layout_id(char* buf, int size)
 {
     danos_get_active_keyboard_layout_id(buf, size);
 }
+
+int set_active_keyboard_layout(char* id)
+{
+    return danos_set_active_keyboard_layout(id);
+}

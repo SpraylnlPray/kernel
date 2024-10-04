@@ -40,9 +40,16 @@ void list_layouts()
     free(available_layouts);
 }
 
-void set_language(char* language)
+void set_layout(char* layout)
 {
-    printf("Setting language");
+    int ret = set_active_keyboard_layout(layout);
+    if (ret < 0)
+    {
+        printf("Unknown layout %s\n", layout);
+        return;
+    }
+
+    printf("Set layout to %s\n", layout);
 }
 
 void handle_layout(int argc, char** argv)
@@ -80,7 +87,7 @@ void handle_layout(int argc, char** argv)
     // keyboard layout set en_US
     if (argc == 4 && strncmp(argv[2], "set", sizeof("set")) == 0)
     {
-        set_language(argv[3]);
+        set_layout(argv[3]);
         return;
     }
 

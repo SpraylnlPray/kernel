@@ -84,7 +84,7 @@ int classic_keyboard_init()
 {
     keyboard_add_layout(&classic_keyboard, &de_layout);
     keyboard_add_layout(&classic_keyboard, &us_layout);
-    keyboard_set_active_layout(&classic_keyboard, &us_layout);
+    keyboard_set_active_layout(&us_layout);
     idt_register_interrupt_callback(ISR_KEYBOARD_INTERRUPT, classic_keyboard_handle_interrupt);
     keyboard_set_capslock(&classic_keyboard, KEYBOARD_CAPSLOCK_OFF);
     keyboard_set_shift(&classic_keyboard, KEYBOARD_SHIFT_OFF);

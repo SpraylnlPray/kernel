@@ -80,6 +80,29 @@ void keyboard_get_active_layout_id(char* buf, uint32_t size)
     strncpy(buf, keyboard_get_active_layout()->identifier, size);
 }
 
+int keyboard_set_layout(char* layout_id)
+{
+    if (layout_id == NULL)
+        return -DANOS_EINVARG;
+    
+    struct keyboard* keyboard = keyboard_list_head;
+    while (keyboard != NULL)
+    {
+        for (int i = 0; i < keyboard->layout_count; i++)
+        {
+            if (strncmp(keyboard->available_layouts[i]->identifier, layout_id, KEYBOARD_LAYOUT_ID_LENGTH) == 0)
+            {
+                keyboard_set_active_layout(keyboard->available_layouts[i]);
+                return DANOS_ALL_OK;
+            }
+        }
+
+        keyboard = keyboard->next;
+    }
+
+    return -DANOS_EINVARG;
+}
+
 struct keyboard_layout* keyboard_get_active_layout()
 {
     return active_layout;
@@ -91,7 +114,7 @@ void keyboard_add_layout(struct keyboard *keyboard, struct keyboard_layout *layo
     keyboard->layout_count++;
 }
 
-void keyboard_set_active_layout(struct keyboard* keyboard, struct keyboard_layout* layout)
+void keyboard_set_active_layout(struct keyboard_layout* layout)
 {
     active_layout = layout;
 }

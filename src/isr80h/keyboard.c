@@ -22,3 +22,9 @@ void* isr80h_command12_get_active_keyboard_layout_id(struct interrupt_frame* int
     keyboard_get_active_layout_id(buf, size);
     return 0;
 }
+
+void* isr80h_command13_set_active_keyboard_layout(struct interrupt_frame* interrupt_frame)
+{
+    char* id = (char*)task_get_stack_item(task_current(), 0);
+    return (void*)keyboard_set_layout(id);
+}
