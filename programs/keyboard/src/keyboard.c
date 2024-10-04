@@ -20,15 +20,18 @@ void show_layout()
 void list_layouts()
 {
     printf("Listing layouts\n");
-    char** available_layouts = (char**)malloc(sizeof(char*) * MAX_KEYBOARD_LAYOUT_COUNT);
-    for (int i = 0; i < MAX_KEYBOARD_LAYOUT_COUNT; i++)
+    int count = get_layout_count();
+    char** available_layouts = (char**)malloc(sizeof(char*) * count);
+    for (int i = 0; i < count; i++)
     {
         available_layouts[i] = (char*)malloc(sizeof(char*) * KEYBOARD_LAYOUT_ID_LENGTH);
     }
-    get_keyboard_layouts(available_layouts);
-    char layout[KEYBOARD_LAYOUT_ID_LENGTH];
-    strncpy(layout, *available_layouts, sizeof(layout));
-    printf("%s\n", layout);
+    get_keyboard_layouts(available_layouts, count);
+
+    for (int i = 0; i < count; i++)
+    {
+        printf("%s\n", available_layouts[i]);
+    }
 }
 
 void set_language(char* language)

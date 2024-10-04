@@ -1,7 +1,12 @@
 #include "keyboard.h"
 #include "danos.h"
 
-char** get_keyboard_layouts(char** available_layouts)
+void get_keyboard_layouts(char** available_layouts, int size)
 {
-    return danos_get_keyboard_layouts(available_layouts);
+    danos_get_keyboard_layouts(available_layouts, size);
+}
+
+int get_layout_count()
+{
+    return danos_get_keyboard_layout_count();
 }

@@ -1,6 +1,7 @@
 #ifndef DANOS_H
 #define DANOS_H
 
+// #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 
@@ -29,6 +30,7 @@ void danos_process_get_arguments(struct process_arguments* arguments);
 int danos_system(struct command_argument* arguments);
 int danos_system_run(const char* command);
 void danos_exit();
-void* danos_get_keyboard_layouts(char** buf);
+void* danos_get_keyboard_layouts(char** buf, int size);
+int danos_get_keyboard_layout_count();
 
 #endif

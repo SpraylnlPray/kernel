@@ -41,13 +41,26 @@ out:
     return res;
 }
 
-void keyboard_get_available_layouts(char** buf)
+int keyboard_get_layout_count()
 {
     struct keyboard* keyboard = keyboard_list_head;
     int count = 0;
-    while (keyboard != NULL && count < MAX_KEYBOARD_LAYOUT_COUNT)
+    while (keyboard != NULL)
     {
-        for (int i = 0; i < keyboard->layout_count && count < MAX_KEYBOARD_LAYOUT_COUNT; i++, count++)
+        count += keyboard->layout_count;
+        keyboard = keyboard->next;
+    }
+
+    return count;
+}
+
+void keyboard_get_available_layouts(char** buf, uint32_t size)
+{
+    struct keyboard* keyboard = keyboard_list_head;
+    int count = 0;
+    while (keyboard != NULL && count < size)
+    {
+        for (int i = 0; i < keyboard->layout_count && count < size; i++, count++)
         {
             strncpy(*buf, keyboard->available_layouts[i], sizeof(keyboard->available_layouts[i]));
             buf++;

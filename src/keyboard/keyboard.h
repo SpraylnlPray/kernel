@@ -1,6 +1,8 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
+#include <stdint.h>
+
 struct process;
 
 #define KEYBOARD_CAPSLOCK_ON 1
@@ -38,6 +40,7 @@ void keyboard_set_capslock(struct keyboard* keyboard, KEYBOARD_CAPSLOCK_STATE st
 void keyboard_set_shift(struct keyboard* keyboard, KEYBOARD_SHIFT_STATE state);
 KEYBOARD_CAPSLOCK_STATE keyboard_get_capslock(struct keyboard* keyboard);
 KEYBOARD_SHIFT_STATE keyboard_get_shift(struct keyboard* keyboard);
-void keyboard_get_available_layouts(char** buf);
+void keyboard_get_available_layouts(char** buf, uint32_t size);
+int keyboard_get_layout_count();
 
 #endif

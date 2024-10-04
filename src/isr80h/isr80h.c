@@ -18,5 +18,6 @@ void isr80h_register_commands()
     isr80h_register_command(SYSTEM_COMMAND7_INVOKE_SYSTEM_COMMAND, isr80h_command7_invoke_system_command);
     isr80h_register_command(SYSTEM_COMMAND8_GET_PROGRAM_ARGUMENTS, isr80h_command8_get_program_arguments);
     isr80h_register_command(SYSTEM_COMMAND9_EXIT, isr80h_command9_exit);
-    isr80h_register_command(SYSTEM_COMMAND10_GET_KEYBOARD_LANGUAGES, isr80h_command10_get_keyboard_languages);
+    isr80h_register_command(SYSTEM_COMMAND10_GET_KEYBOARD_LAYOUTS, isr80h_command10_get_keyboard_layouts);
+    isr80h_register_command(SYSTEM_COMMAND11_GET_KEYBOARD_LAYOUT_COUNT, isr80h_command11_get_keyboard_layout_count);
 }
