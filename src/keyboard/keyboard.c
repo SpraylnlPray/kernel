@@ -70,6 +70,17 @@ void keyboard_get_available_layouts(char** buf, uint32_t size)
     }
 }
 
+void add_layout(struct keyboard *keyboard, struct keyboard_layout *layout)
+{
+    keyboard->available_layouts[keyboard->layout_count] = layout;
+    keyboard->layout_count++;
+}
+
+void set_active_layout(struct keyboard* keyboard, struct keyboard_layout* layout)
+{
+    keyboard->active_layout = layout;
+}
+
 static int keyboard_get_tail_index(struct process* process)
 {
     return process->keyboard.tail % sizeof(process->keyboard.buffer);

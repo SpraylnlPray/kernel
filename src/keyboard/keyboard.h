@@ -49,5 +49,7 @@ KEYBOARD_CAPSLOCK_STATE keyboard_get_capslock(struct keyboard* keyboard);
 KEYBOARD_SHIFT_STATE keyboard_get_shift(struct keyboard* keyboard);
 void keyboard_get_available_layouts(char** buf, uint32_t size);
 int keyboard_get_layout_count();
+void add_layout(struct keyboard *keyboard, struct keyboard_layout *layout);
+void set_active_layout(struct keyboard* keyboard, struct keyboard_layout* layout);
 
 #endif

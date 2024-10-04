@@ -80,19 +80,6 @@ struct keyboard classic_keyboard = {
     .layout_count = 0,
 };
 
-// TODO: Move to keyboard.h
-void add_layout(struct keyboard *keyboard, struct keyboard_layout *layout)
-{
-    keyboard->available_layouts[keyboard->layout_count] = layout;
-    keyboard->layout_count++;
-}
-
-// TODO: Move to keyboard.h
-void set_active_layout(struct keyboard* keyboard, struct keyboard_layout* layout)
-{
-    keyboard->active_layout = layout;
-}
-
 int classic_keyboard_init()
 {
     add_layout(&classic_keyboard, &de_layout);
