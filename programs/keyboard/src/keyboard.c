@@ -14,12 +14,15 @@ void print_usage()
 
 void show_layout()
 {
-    printf("Showing keyboard layout\n");
+    char* id = malloc(KEYBOARD_LAYOUT_ID_LENGTH);
+    get_active_keyboard_layout_id(id, KEYBOARD_LAYOUT_ID_LENGTH);
+    printf("Active keyboard layout: %s\n", id);
+    free(id);
 }
 
 void list_layouts()
 {
-    printf("Listing layouts\n");
+    printf("Available keyboard layouts:\n");
     int count = get_layout_count();
     char** available_layouts = (char**)malloc(sizeof(char*) * count);
     for (int i = 0; i < count; i++)
@@ -31,7 +34,10 @@ void list_layouts()
     for (int i = 0; i < count; i++)
     {
         printf("%s\n", available_layouts[i]);
+        free(available_layouts[i]);
     }
+
+    free(available_layouts);
 }
 
 void set_language(char* language)

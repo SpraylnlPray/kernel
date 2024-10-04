@@ -34,7 +34,6 @@ struct keyboard
     KEYBOARD_CAPSLOCK_STATE capslock_state;
     KEYBOARD_SHIFT_STATE shift_state;
     struct keyboard_layout* available_layouts[MAX_KEYBOARD_LAYOUT_COUNT];
-    struct keyboard_layout* active_layout;
     int layout_count;
 };
 
@@ -49,7 +48,9 @@ KEYBOARD_CAPSLOCK_STATE keyboard_get_capslock(struct keyboard* keyboard);
 KEYBOARD_SHIFT_STATE keyboard_get_shift(struct keyboard* keyboard);
 void keyboard_get_available_layouts(char** buf, uint32_t size);
 int keyboard_get_layout_count();
-void add_layout(struct keyboard *keyboard, struct keyboard_layout *layout);
-void set_active_layout(struct keyboard* keyboard, struct keyboard_layout* layout);
+void keyboard_add_layout(struct keyboard *keyboard, struct keyboard_layout *layout);
+void keyboard_set_active_layout(struct keyboard* keyboard, struct keyboard_layout* layout);
+void keyboard_get_active_layout_id(char* buf, uint32_t size);
+struct keyboard_layout* keyboard_get_active_layout();
 
 #endif

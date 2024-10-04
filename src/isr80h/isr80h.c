@@ -20,4 +20,5 @@ void isr80h_register_commands()
     isr80h_register_command(SYSTEM_COMMAND9_EXIT, isr80h_command9_exit);
     isr80h_register_command(SYSTEM_COMMAND10_GET_KEYBOARD_LAYOUTS, isr80h_command10_get_keyboard_layouts);
     isr80h_register_command(SYSTEM_COMMAND11_GET_KEYBOARD_LAYOUT_COUNT, isr80h_command11_get_keyboard_layout_count);
+    isr80h_register_command(SYSTEM_COMMAND12_GET_ACTIVE_KEYBOARD_LAYOUT_ID, isr80h_command12_get_active_keyboard_layout_id);
 }

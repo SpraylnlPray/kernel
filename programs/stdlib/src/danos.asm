@@ -13,6 +13,7 @@ global danos_system:function
 global danos_exit:function
 global danos_get_keyboard_layouts:function
 global danos_get_keyboard_layout_count:function
+global danos_get_active_keyboard_layout_id:function
 
 ; void print(const char* message)
 print:
@@ -133,14 +134,14 @@ danos_exit:
     pop ebp
     ret
 
-; void* danos_get_keyboard_layouts(char** buf, uin32_t size)
+; void* danos_get_keyboard_layouts(char** buf, int size)
 danos_get_keyboard_layouts:
     push ebp
     mov ebp, esp
 
     mov eax, 10 ; Command 10 get keyboard layouts
-    push dword[ebp + 8] ; Variable "buf"
-    push dword[ebp + 12] ; Variable size
+    push dword[ebp + 8] ; Variable "size"
+    push dword[ebp + 12] ; Variable "buf"
     int 0x80
 
     add esp, 8
@@ -155,6 +156,21 @@ danos_get_keyboard_layout_count:
 
     mov eax, 11 ; Command 11 get keyboard layout count
     int 0x80
+
+    pop ebp
+    ret
+
+; void* danos_get_active_keyboard_layout_id(char* buf, int size)
+danos_get_active_keyboard_layout_id:
+    push ebp
+    mov ebp, esp
+
+    mov eax, 12 ; Command 12 get active layout id
+    push dword[ebp + 8] ; Variable "size"
+    push dword[ebp + 12] ; Variable "buf"
+    int 0x80
+
+    add esp, 8
 
     pop ebp
     ret

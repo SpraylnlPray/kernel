@@ -82,9 +82,9 @@ struct keyboard classic_keyboard = {
 
 int classic_keyboard_init()
 {
-    add_layout(&classic_keyboard, &de_layout);
-    add_layout(&classic_keyboard, &us_layout);
-    set_active_layout(&classic_keyboard, &us_layout);
+    keyboard_add_layout(&classic_keyboard, &de_layout);
+    keyboard_add_layout(&classic_keyboard, &us_layout);
+    keyboard_set_active_layout(&classic_keyboard, &us_layout);
     idt_register_interrupt_callback(ISR_KEYBOARD_INTERRUPT, classic_keyboard_handle_interrupt);
     keyboard_set_capslock(&classic_keyboard, KEYBOARD_CAPSLOCK_OFF);
     keyboard_set_shift(&classic_keyboard, KEYBOARD_SHIFT_OFF);
@@ -92,17 +92,17 @@ int classic_keyboard_init()
     return 0;
 }
 
-uint8_t classic_keyboard_scancode_to_char(uint8_t scancode)
+uint8_t classic_keyboard_scancode_to_char(struct keyboard_layout* layout, uint8_t scancode)
 {
-    size_t size_of_keyboard_set_one = sizeof(classic_keyboard.active_layout->scan_set_default) / sizeof(uint8_t);
+    size_t size_of_keyboard_set_one = sizeof(layout->scan_set_default) / sizeof(uint8_t);
     if (scancode > size_of_keyboard_set_one)
     {
         return 0;
     }
 
-    char c = classic_keyboard.active_layout->scan_set_default[scancode];
+    char c = layout->scan_set_default[scancode];
     if (keyboard_get_shift(&classic_keyboard) == KEYBOARD_SHIFT_ON || keyboard_get_capslock(&classic_keyboard) == KEYBOARD_CAPSLOCK_ON)
-        c = classic_keyboard.active_layout->scan_set_shift[scancode];
+        c = layout->scan_set_shift[scancode];
 
     return c;
 }
@@ -138,7 +138,7 @@ void classic_keyboard_handle_interrupt()
         keyboard_set_capslock(&classic_keyboard, old_state == KEYBOARD_CAPSLOCK_ON ? KEYBOARD_CAPSLOCK_OFF : KEYBOARD_CAPSLOCK_ON);
     }
 
-    uint8_t c = classic_keyboard_scancode_to_char(scancode);
+    uint8_t c = classic_keyboard_scancode_to_char(keyboard_get_active_layout(), scancode);
     if (c != 0)
     {
         keyboard_push(c);

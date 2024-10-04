@@ -8,10 +8,12 @@
 
 static struct keyboard* keyboard_list_head = 0;
 static struct keyboard* keyboard_list_last = 0;
+static struct keyboard_layout* active_layout = 0;
 
 void keyboard_init()
 {
     keyboard_insert(classic_init());
+    // TODO: Set active layout here? currently it is done in classic_keyboard_init()
 }
 
 int keyboard_insert(struct keyboard* keyboard)
@@ -70,15 +72,28 @@ void keyboard_get_available_layouts(char** buf, uint32_t size)
     }
 }
 
-void add_layout(struct keyboard *keyboard, struct keyboard_layout *layout)
+void keyboard_get_active_layout_id(char* buf, uint32_t size)
+{
+    if (size < KEYBOARD_LAYOUT_ID_LENGTH)
+        return;
+
+    strncpy(buf, keyboard_get_active_layout()->identifier, size);
+}
+
+struct keyboard_layout* keyboard_get_active_layout()
+{
+    return active_layout;
+}
+
+void keyboard_add_layout(struct keyboard *keyboard, struct keyboard_layout *layout)
 {
     keyboard->available_layouts[keyboard->layout_count] = layout;
     keyboard->layout_count++;
 }
 
-void set_active_layout(struct keyboard* keyboard, struct keyboard_layout* layout)
+void keyboard_set_active_layout(struct keyboard* keyboard, struct keyboard_layout* layout)
 {
-    keyboard->active_layout = layout;
+    active_layout = layout;
 }
 
 static int keyboard_get_tail_index(struct process* process)

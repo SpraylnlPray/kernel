@@ -5,5 +5,6 @@
 
 void get_keyboard_layouts(char** available_layouts, int size);
 int get_layout_count();
+void get_active_keyboard_layout_id(char* buf, int size);
 
 #endif

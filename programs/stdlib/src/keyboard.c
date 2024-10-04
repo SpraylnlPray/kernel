@@ -10,3 +10,8 @@ int get_layout_count()
 {
     return danos_get_keyboard_layout_count();
 }
+
+void get_active_keyboard_layout_id(char* buf, int size)
+{
+    danos_get_active_keyboard_layout_id(buf, size);
+}
