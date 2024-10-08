@@ -1,7 +1,6 @@
 FILES= ./build/kernel.asm.o ./build/gdt/gdt.o ./build/isr80h/keyboard.o ./build/loader/formats/elf.o ./build/loader/formats/elfloader.o ./build/isr80h/misc.o ./build/isr80h/io.o ./build/keyboard/classic.o ./build/keyboard/keyboard.o ./build/isr80h/heap.o  ./build/task/task.o ./build/task/task.asm.o ./build/task/process.o ./build/gdt/gdt.asm.o ./build/kernel.o ./build/task/tss.asm.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/disk/streamer.o ./build/fs/pparser.o ./build/fs/file.o ./build/string/string.o ./build/fs/fat/fat16.o ./build/isr80h/process.o ./build/isr80h/isr80h.o
 INCLUDES= -I./src
 FLAGS= -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
-BUILD_DIRS= ./build ./build/loader ./build/loader/formats ./build/idt ./build/memory ./build/io ./build/isr80h ./build/task ./build/memory/heap ./build/memory/paging ./build/disk ./build/fs ./build/fs/fat ./build/string ./build/gdt ./build/keyboard
 BIN_DIRS= ./bin
 
 BUILD_DIR=./build
@@ -36,11 +35,6 @@ directories: $(BIN_DIRS)
 	@echo "## $@ start"
 	mkdir -p $(dir $@)
 	@echo "## $@ finished"
-
-# $(BUILD_DIRS):
-# 	@echo "Create build directories: $@"
-# 	@mkdir $@
-# 	@echo "Build directories created: $@"
 
 $(BIN_DIRS):
 	@echo "Create bin directories: $@"
