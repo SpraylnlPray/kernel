@@ -52,45 +52,15 @@ $(BIN_DIRS):
 	nasm -f bin ./src/boot/boot.asm -o ./bin/boot.bin
 	@echo "$@ finished"
 
-./build/kernel.asm.o: ./src/kernel.asm
-	@echo "$@ start"
-	nasm -f elf -g ./src/kernel.asm -o ./build/kernel.asm.o
-	@echo "$@ finished"
-
-./build/idt/idt.asm.o: ./src/idt/idt.asm
-	@echo "$@ start"
-	nasm -f elf -g ./src/idt/idt.asm -o ./build/idt/idt.asm.o
-	@echo "$@ finished"
+${BUILD_DIR}/%.asm.o: ${SRC_DIR}/%.asm
+	@echo "## $@ start"
+	nasm -f elf -g $^ -o $@
+	@echo "## $@ finished"
 
 ${BUILD_DIR}/%.o: ${SRC_DIR}/%.c
 	@echo "## $@ start"
 	i686-elf-gcc ${INCLUDES} -I$(dir $^) ${FLAGS} -std=gnu99 -c $^ -o $@
 	@echo "## $@ finished"
-
-./build/gdt/gdt.asm.o: ./src/gdt/gdt.asm
-	@echo "$@ start"
-	nasm -f elf -g ./src/gdt/gdt.asm -o ./build/gdt/gdt.asm.o
-	@echo "$@ finished"
-
-./build/io/io.asm.o: ./src/io/io.asm
-	@echo "$@ start"
-	nasm -f elf -g ./src/io/io.asm -o ./build/io/io.asm.o
-	@echo "$@ finished"
-
-./build/task/tss.asm.o: ./src/task/tss.asm
-	@echo "$@ start"
-	nasm -f elf -g ./src/task/tss.asm -o ./build/task/tss.asm.o
-	@echo "$@ finished"
-
-./build/task/task.asm.o: ./src/task/task.asm
-	@echo "$@ start"
-	nasm -f elf -g ./src/task/task.asm -o ./build/task/task.asm.o
-	@echo "$@ finished"
-
-./build/memory/paging/paging.asm.o: ./src/memory/paging/paging.asm
-	@echo "$@ start"
-	nasm -f elf -g ./src/memory/paging/paging.asm -o ./build/memory/paging/paging.asm.o
-	@echo "$@ finished"
 
 # TODO: Extra include of -I./src/fs
 ./build/fs/fat/fat16.o: ./src/fs/fat/fat16.c
