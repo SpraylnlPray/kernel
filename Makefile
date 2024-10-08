@@ -29,12 +29,18 @@ all: directories ./bin/boot.bin ./bin/kernel.bin programs
 	sudo umount /mnt/d
 	@echo "Make all finished"
 
-directories: $(BUILD_DIRS) $(BIN_DIRS)
+directories: $(BIN_DIRS)
 
-$(BUILD_DIRS):
-	@echo "Create build directories: $@"
-	@mkdir $@
-	@echo "Build directories created: $@"
+.PHONY:%.dir
+%.dir:
+	@echo "## $@ start"
+	mkdir -p $(dir $@)
+	@echo "## $@ finished"
+
+# $(BUILD_DIRS):
+# 	@echo "Create build directories: $@"
+# 	@mkdir $@
+# 	@echo "Build directories created: $@"
 
 $(BIN_DIRS):
 	@echo "Create bin directories: $@"
@@ -52,18 +58,18 @@ $(BIN_DIRS):
 	nasm -f bin ./src/boot/boot.asm -o ./bin/boot.bin
 	@echo "$@ finished"
 
-${BUILD_DIR}/%.asm.o: ${SRC_DIR}/%.asm
+${BUILD_DIR}/%.asm.o: ${SRC_DIR}/%.asm ${BUILD_DIR}/%.dir
 	@echo "## $@ start"
-	nasm -f elf -g $^ -o $@
+	nasm -f elf -g $< -o $@
 	@echo "## $@ finished"
 
-${BUILD_DIR}/%.o: ${SRC_DIR}/%.c
+${BUILD_DIR}/%.o: ${SRC_DIR}/%.c ${BUILD_DIR}/%.dir
 	@echo "## $@ start"
-	i686-elf-gcc ${INCLUDES} -I$(dir $^) ${FLAGS} -std=gnu99 -c $^ -o $@
+	i686-elf-gcc ${INCLUDES} -I$(dir $^) ${FLAGS} -std=gnu99 -c $< -o $@
 	@echo "## $@ finished"
 
 # TODO: Extra include of -I./src/fs
-./build/fs/fat/fat16.o: ./src/fs/fat/fat16.c
+./build/fs/fat/fat16.o: ./src/fs/fat/fat16.c ./build/fs/fat/fat16.dir
 	@echo "$@ start"
 	i686-elf-gcc ${INCLUDES} -I./src/fs -I./src/fs/fat ${FLAGS} -std=gnu99 -c ./src/fs/fat/fat16.c -o ./build/fs/fat/fat16.o
 	@echo "$@ finished"
@@ -84,5 +90,5 @@ clean: programs_clean
 	@echo "$@ start"
 	rm -rf ./bin
 	rm -rf ${FILES}
-	rm -rf ./build
+	rm -rf ${BUILD_DIR}
 	@echo "$@ finished"
