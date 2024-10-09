@@ -1,15 +1,24 @@
-FILES= ./build/kernel.asm.o ./build/gdt/gdt.o ./build/isr80h/keyboard.o ./build/loader/formats/elf.o ./build/loader/formats/elfloader.o ./build/isr80h/misc.o ./build/isr80h/io.o ./build/keyboard/classic.o ./build/keyboard/keyboard.o ./build/isr80h/heap.o  ./build/task/task.o ./build/task/task.asm.o ./build/task/process.o ./build/gdt/gdt.asm.o ./build/kernel.o ./build/task/tss.asm.o ./build/idt/idt.asm.o ./build/idt/idt.o ./build/memory/memory.o ./build/io/io.asm.o ./build/memory/heap/heap.o ./build/memory/heap/kheap.o ./build/memory/paging/paging.o ./build/memory/paging/paging.asm.o ./build/disk/disk.o ./build/disk/streamer.o ./build/fs/pparser.o ./build/fs/file.o ./build/string/string.o ./build/fs/fat/fat16.o ./build/isr80h/process.o ./build/isr80h/isr80h.o
 INCLUDES= -I./src
 FLAGS= -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
 
 BUILD_DIR=./build
 SRC_DIR=./src
 
+C_FILES=$(shell find ${SRC_DIR} -name "*.c")
+ASM_FILES=$(shell find ${SRC_DIR} -name "*.asm")
+OBJS=$(patsubst ${SRC_DIR}/%.asm,${BUILD_DIR}/%.asm.o,${ASM_FILES}) $(patsubst ${SRC_DIR}/%.c,${BUILD_DIR}/%.o,${C_FILES})
+OBJ_FILES=$(filter-out ${BUILD_DIR}/boot/boot.asm.o,${OBJS}) # boot binary is built differently
+
 export PREFIX := $(HOME)/opt/cross
 export TARGET := i686-elf
 export PATH := $(PREFIX)/bin:$(PATH)
 
-.PHONY: all clean programs
+.PHONY: all clean programs show
+
+show:
+	@echo c files: ${C_FILES}
+	@echo asm files: ${ASM_FILES}
+	@echo obj files: ${OBJ_FILES}
 
 all: ./bin/boot.bin ./bin/kernel.bin programs
 	@echo "Make all start"
@@ -33,9 +42,9 @@ all: ./bin/boot.bin ./bin/kernel.bin programs
 	mkdir -p $(dir $@)
 	@echo "## $@ finished"
 
-./bin/kernel.bin: ${FILES} ./bin/kernel.bin.dir
+./bin/kernel.bin: ${OBJ_FILES} ./bin/kernel.bin.dir
 	@echo "$@ start"
-	i686-elf-ld -g -relocatable ${FILES} -o ./build/kernelfull.o
+	i686-elf-ld -g -relocatable ${OBJ_FILES} -o ./build/kernelfull.o
 	i686-elf-gcc ${FLAGS} -T ./src/linker.ld -o ./bin/kernel.bin -ffreestanding -O0 -nostdlib ./build/kernelfull.o
 	@echo "$@ finished"
 
