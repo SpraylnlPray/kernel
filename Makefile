@@ -59,7 +59,7 @@ ${BUILD_DIR}/%.asm.o: ${SRC_DIR}/%.asm ${BUILD_DIR}/%.dir
 
 ${BUILD_DIR}/%.o: ${SRC_DIR}/%.c ${BUILD_DIR}/%.dir
 	@echo "## $@ start"
-	i686-elf-gcc ${INCLUDES} -I$(dir $^) ${FLAGS} -std=gnu99 -c $< -o $@
+	i686-elf-gcc ${INCLUDES} -I$(dir $<) ${FLAGS} -std=gnu99 -c $< -o $@
 	@echo "## $@ finished"
 
 # TODO: Extra include of -I./src/fs
