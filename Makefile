@@ -1,8 +1,9 @@
-INCLUDES= -I./src
+INCLUDES= -I./src/kernel -I./src
 FLAGS= -g -ffreestanding -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
 
 BUILD_DIR=./build
 SRC_DIR=./src
+BIN_DIR=./bin
 
 C_FILES=$(shell find ${SRC_DIR} -name "*.c")
 ASM_FILES=$(shell find ${SRC_DIR} -name "*.asm")
@@ -20,10 +21,10 @@ show:
 	@echo asm files: ${ASM_FILES}
 	@echo obj files: ${OBJ_FILES}
 
-all: ./bin/boot.bin ./bin/kernel.bin programs
+all: ./bin/boot/boot.bin ./bin/kernel.bin programs
 	@echo "Make all start"
 	rm -rf ./bin/os.bin 
-	dd if=./bin/boot.bin >> ./bin/os.bin
+	dd if=./bin/boot/boot.bin >> ./bin/os.bin
 	dd if=./bin/kernel.bin >> ./bin/os.bin
 	dd if=/dev/zero bs=1048576 count=16 >> ./bin/os.bin
 	# TODO: Create /mnt/ dir!
@@ -48,9 +49,9 @@ all: ./bin/boot.bin ./bin/kernel.bin programs
 	i686-elf-gcc ${FLAGS} -T ./src/linker.ld -o ./bin/kernel.bin -ffreestanding -O0 -nostdlib ./build/kernelfull.o
 	@echo "$@ finished"
 
-./bin/boot.bin: ./src/boot/boot.asm ./bin/boot.bin.dir
+./bin/boot/boot.bin: ./src/boot/boot.asm ./bin/boot/boot.bin.dir
 	@echo "$@ start"
-	nasm -f bin ./src/boot/boot.asm -o ./bin/boot.bin
+	nasm -f bin ./src/boot/boot.asm -o ./bin/boot/boot.bin
 	@echo "$@ finished"
 
 ${BUILD_DIR}/%.asm.o: ${SRC_DIR}/%.asm ${BUILD_DIR}/%.dir

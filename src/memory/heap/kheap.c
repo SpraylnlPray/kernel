@@ -1,6 +1,6 @@
 #include "kheap.h"
 #include "heap.h"
-#include "../../config.h"
+#include "config.h"
 #include "kernel.h"
 #include "memory/memory.h"
 
