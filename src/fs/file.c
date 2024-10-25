@@ -125,6 +125,62 @@ FILE_MODE file_get_mode_by_string(const char* str)
     return mode;
 }
 
+int opendir(const char* dirname)
+{
+    int res = 0;
+    struct path_root* root_path = pathparser_parse(dirname, NULL);
+    if (!root_path)
+    {
+        res = -DANOS_EINVARG;
+        goto out;
+    }
+
+    if (!root_path->first) // TODO: Check if this check is correct for directories as well
+    {
+        res = -DANOS_EINVARG;
+        goto out;
+    }
+
+    // Ensure the disk we are reading from exists
+    struct disk* disk = disk_get(root_path->drive_no);
+    if (!disk)
+    {
+        res = -DANOS_EIO;
+        goto out;
+    }
+
+    if (!disk->filesystem)
+    {
+        res = -DANOS_EIO;
+        goto out;
+    }
+
+    void* descriptor_private_data = disk->filesystem->opendir(disk, root_path->first);
+    if (ISERR(descriptor_private_data))
+    {
+        res = ERROR_I(descriptor_private_data);
+        goto out;
+    }
+
+    struct file_descriptor* desc = 0;
+    res = file_new_descriptor(&desc);
+    if (res < 0)
+    {
+        goto out;
+    }
+
+    desc->filesystem = disk->filesystem;
+    desc->private_data = descriptor_private_data;
+    desc->disk = disk;
+    res = desc->index;
+
+out:
+    // fopen should return 0 if it fails
+    if (res < 0)
+        res = 0;
+    return res;
+}
+
 int fopen(const char* filename, const char* mode_str)
 {
     int res = 0;

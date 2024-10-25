@@ -198,6 +198,14 @@ void kernel_main()
     // Enable paging
     enable_paging();
 
+    int fd = opendir("0:/hello");
+    if (!fd)
+    {
+        panic("Couldn't open 0:/\n");
+    }
+    struct file_stat s;
+    fstat(fd, &s);
+
     // Register kernel commands
     isr80h_register_commands();
 

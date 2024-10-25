@@ -161,21 +161,21 @@ static int process_load_binary(const char* filename, struct process* process)
         goto out;
     }
 
-    program_data_ptr = kzalloc(stat.filesize);
+    program_data_ptr = kzalloc(stat.size);
     if (!program_data_ptr)
     {
         res = -DANOS_ENOMEM;
         goto out;
     }
 
-    if (fread(program_data_ptr, stat.filesize, 1, fd) != 1)
+    if (fread(program_data_ptr, stat.size, 1, fd) != 1)
     {
         res = DANOS_EIO;
         goto out;
     }
 
     process->ptr = program_data_ptr;
-    process->size = stat.filesize;
+    process->size = stat.size;
     process->filetype = PROCESS_FILE_TYPE_BINARY;
 
 out:

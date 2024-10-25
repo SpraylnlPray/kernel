@@ -79,7 +79,7 @@ struct fat_directory_item
     uint16_t last_mod_time;
     uint16_t last_mod_date;
     uint16_t low_16_bits_first_cluster;
-    uint32_t filesize;
+    uint32_t size;
 } __attribute__((packed));
 
 struct fat_directory
@@ -108,6 +108,11 @@ struct fat_file_descriptor
     uint32_t pos;
 };
 
+struct fat_directory_descriptor
+{
+    struct fat_directory* directory;
+};
+
 struct fat_private
 {
     struct fat_h header;
@@ -128,6 +133,7 @@ int fat16_read(struct disk* disk, void* descriptor, uint32_t size, uint32_t nmem
 int fat16_seek(void* private, uint32_t offset, FILE_SEEK_MODE seek_mode);
 int fat16_stat(struct disk* disk, void* private, struct file_stat* stat);
 int fat16_close(void* private);
+void* fat16_opendir(struct disk* disk, struct path_part* path);
 
 struct filesystem fat16_fs =
 {
@@ -137,6 +143,7 @@ struct filesystem fat16_fs =
     .seek = fat16_seek,
     .stat = fat16_stat,
     .close = fat16_close,
+    .opendir = fat16_opendir,
 };
 
 struct filesystem* fat16_init()
@@ -716,7 +723,7 @@ int fat16_seek(void* private, uint32_t offset, FILE_SEEK_MODE seek_mode)
     }
 
     struct fat_directory_item* ritem = desc_item->item;
-    if (offset >= ritem->filesize)
+    if (offset >= ritem->size)
     {
         res = -DANOS_EIO;
         goto out;
@@ -751,13 +758,17 @@ int fat16_stat(struct disk* disk, void* private, struct file_stat* stat)
     struct fat_item* desc_item = desc->item;
     if (desc_item->type != FAT_ITEM_TYPE_FILE)
     {
-        res = -DANOS_EINVARG;
+        struct fat_directory* item = desc_item->directory;
+        stat->size = item->total * sizeof(struct fat_directory_item);
+        stat->type = FILE_TYPE_DIRECTORY;
+        stat->flags = 0x00;
         goto out;
     }
 
     struct fat_directory_item* ritem = desc_item->item;
-    stat->filesize = ritem->filesize;
+    stat->size = ritem->size;
     stat->flags = 0x00;
+    stat->type = FILE_TYPE_FILE;
 
     if (ritem->attribute & FAT_FILE_READ_ONLY)
     {
@@ -778,4 +789,39 @@ int fat16_close(void* private)
 {
     fat16_free_file_descriptor((struct fat_file_descriptor*) private);
     return 0;
+}
+
+void* fat16_opendir(struct disk* disk, struct path_part* path)
+{
+    int err_code = 0;
+    struct fat_directory_descriptor* descriptor = 0;
+
+    struct fat_item* item = fat16_get_directory_entry(disk, path);
+    if (!item)
+    {
+        err_code = -DANOS_EIO;
+        goto err_out;
+    }
+
+    if (item->type != FAT_ITEM_TYPE_DIRECTORY)
+    {
+        err_code = -DANOS_EINVARG;
+        goto err_out;
+    }
+
+    descriptor = kzalloc(sizeof(struct fat_directory_descriptor));
+    if (!descriptor)
+    {
+        err_code = -DANOS_ENOMEM;
+        goto err_out;
+    }
+
+    descriptor->directory = item->directory;
+    return descriptor;
+
+err_out:
+    if (descriptor)
+        kfree(descriptor);
+    
+    return ERROR(err_code);
 }

@@ -28,9 +28,13 @@ all: ./bin/os.bin
 	sudo mount -t vfat ./bin/os.bin /mnt/d
 	# Copy a file over
 	sudo cp ./hello.txt /mnt/d
+	sudo mkdir /mnt/d/hello
+	sudo cp ./hello.txt /mnt/d/hello
 	sudo cp ./programs/blank/blank.elf /mnt/d
 	sudo cp ./programs/shell/shell.elf /mnt/d
 	sudo cp ./programs/keyboard/keyboard.elf /mnt/d
+	sudo ls -la /mnt/d
+	sudo ls -la /mnt/d/hello
 	sudo umount /mnt/d
 	@echo "## $@ finished"
 

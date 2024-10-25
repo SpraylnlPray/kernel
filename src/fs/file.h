@@ -28,10 +28,18 @@ enum
 
 typedef unsigned int FILE_STAT_FLAGS;
 
+typedef unsigned int FILE_STAT_TYPE;
+enum
+{
+    FILE_TYPE_FILE,
+    FILE_TYPE_DIRECTORY,
+};
+
 struct file_stat
 {
     FILE_STAT_FLAGS flags;
-    uint32_t filesize;
+    uint32_t size;
+    FILE_STAT_TYPE type;
 };
 
 struct disk;
@@ -41,6 +49,7 @@ typedef int (*FS_READ_FUNCTION)(struct disk* disk, void* privatee, uint32_t size
 typedef int (*FS_SEEK_FUNCTION)(void* private, uint32_t offset, FILE_SEEK_MODE seek_mode);
 typedef int (*FS_STAT_FUNCTION)(struct disk* disk, void* private, struct file_stat* stat);
 typedef int (*FS_CLOSE_FUNCTION)(void* private);
+typedef void* (*FS_OPEN_DIR_FUNCTION)(struct disk* disk, struct path_part* path);
 
 struct filesystem
 {
@@ -51,6 +60,7 @@ struct filesystem
     FS_SEEK_FUNCTION seek;
     FS_STAT_FUNCTION stat;
     FS_CLOSE_FUNCTION close;
+    FS_OPEN_DIR_FUNCTION opendir;
 
     char name[20];
 };
@@ -76,5 +86,6 @@ int fstat(int fd, struct file_stat* stat);
 void fs_insert_filesystem(struct filesystem* filesystem);
 struct filesystem* fs_resolve(struct disk* disk);
 int fclose(int fd);
+int opendir(const char* dirname);
 
 #endif
