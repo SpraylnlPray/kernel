@@ -88,4 +88,18 @@ struct filesystem* fs_resolve(struct disk* disk);
 int fclose(int fd);
 int opendir(const char* dirname);
 
+typedef unsigned int D_TYPE;
+enum
+{
+    DT_REG, // Regular file
+    DT_DIR, // Directory
+}; // https://www.gnu.org/software/libc/manual/html_node/Directory-Entries.html
+
+struct dirent
+{
+    char* d_name;
+    uint8_t d_namelen;
+    D_TYPE d_type;
+};
+
 #endif

@@ -28,6 +28,8 @@ typedef unsigned int FAT_ITEM_TYPE;
 #define FAT_FILE_DEVICE 0x40
 #define FAT_FILE_RESERVED 0x80
 
+#define ATTR_LONG_NAME (FAT_FILE_READ_ONLY | FAT_FILE_HIDDEN | FAT_FILE_SYSTEM | FAT_FILE_VOLUME_LABEL)
+
 struct fat_header_extended
 {
     uint8_t drive_number;
@@ -106,11 +108,6 @@ struct fat_file_descriptor
 {
     struct fat_item* item;
     uint32_t pos;
-};
-
-struct fat_directory_descriptor
-{
-    struct fat_directory* directory;
 };
 
 struct fat_private
@@ -196,6 +193,11 @@ int fat16_get_total_items_for_directory(struct disk* disk, uint32_t directory_st
 
         // Is the item unused
         if (item.filename[0] == 0xE5) // value from fat specification
+        {
+            continue;
+        }
+
+        if (item.attribute & ATTR_LONG_NAME) // item is long name entry -> ignore
         {
             continue;
         }
@@ -809,14 +811,14 @@ void* fat16_opendir(struct disk* disk, struct path_part* path)
         goto err_out;
     }
 
-    descriptor = kzalloc(sizeof(struct fat_directory_descriptor));
-    if (!descriptor)
-    {
-        err_code = -DANOS_ENOMEM;
-        goto err_out;
-    }
+    // descriptor = kzalloc(sizeof(struct fat_directory_descriptor));
+    // if (!descriptor)
+    // {
+    //     err_code = -DANOS_ENOMEM;
+    //     goto err_out;
+    // }
 
-    descriptor->directory = item->directory;
+    // descriptor->directory = item->directory;
     return descriptor;
 
 err_out:

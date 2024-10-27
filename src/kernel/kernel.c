@@ -203,8 +203,6 @@ void kernel_main()
     {
         panic("Couldn't open 0:/\n");
     }
-    struct file_stat s;
-    fstat(fd, &s);
 
     // Register kernel commands
     isr80h_register_commands();
