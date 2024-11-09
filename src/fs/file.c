@@ -283,6 +283,20 @@ out:
     return res;
 }
 
+struct dirent* readdir(int fd)
+{
+    struct dirent* dirent = 0;
+
+    struct file_descriptor* desc = file_get_descriptor(fd);
+    if (!desc)
+    {
+        return dirent;
+    }
+
+    dirent = desc->filesystem->readdir(desc->private_data);
+    return dirent;
+}
+
 int fstat(int fd, struct file_stat* stat)
 {
     int res = 0;

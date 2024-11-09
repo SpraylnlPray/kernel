@@ -130,6 +130,7 @@ int fat16_seek(void* private, uint32_t offset, FILE_SEEK_MODE seek_mode);
 int fat16_stat(struct disk* disk, void* private, struct file_stat* stat);
 int fat16_close(void* private);
 void* fat16_opendir(struct disk* disk, struct path_part* path);
+struct dirent* fat16_readdir(void* private);
 
 struct filesystem fat16_fs =
 {
@@ -140,6 +141,7 @@ struct filesystem fat16_fs =
     .stat = fat16_stat,
     .close = fat16_close,
     .opendir = fat16_opendir,
+    .readdir = fat16_readdir,
 };
 
 struct filesystem* fat16_init()
@@ -822,4 +824,9 @@ err_out:
         kfree(descriptor);
     
     return ERROR(err_code);
+}
+
+struct dirent* fat16_readdir(void* private)
+{
+    return NULL;
 }

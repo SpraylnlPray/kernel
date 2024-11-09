@@ -204,6 +204,20 @@ void kernel_main()
         panic("Couldn't open 0:/hello\n");
     }
 
+    struct dirent* dirent = readdir(fd);
+    if (!dirent)
+    {
+        panic("Couldn't readdir fd\n");
+    }
+    
+    while(dirent != NULL)
+    {
+        print("entry name: ");
+        print(dirent->d_name);
+        print("\n");
+        dirent = readdir(fd);
+    }
+
     // Register kernel commands
     isr80h_register_commands();
 
