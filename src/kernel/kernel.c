@@ -201,7 +201,7 @@ void kernel_main()
     int fd = opendir("0:/hello");
     if (!fd)
     {
-        panic("Couldn't open 0:/\n");
+        panic("Couldn't open 0:/hello\n");
     }
 
     // Register kernel commands

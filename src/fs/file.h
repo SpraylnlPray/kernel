@@ -97,7 +97,7 @@ enum
 
 struct dirent
 {
-    char* d_name;
+    const char* d_name;
     uint8_t d_namelen;
     D_TYPE d_type;
 };

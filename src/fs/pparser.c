@@ -4,6 +4,7 @@
 #include "memory/heap/kheap.h"
 #include "memory/memory.h"
 #include "status.h"
+#include "kernel.h"
 
 static int pathparser_path_valid_format(const char *filename)
 {
@@ -133,4 +134,20 @@ struct path_root* pathparser_parse(const char *path, const char *current_directo
 
 out:
     return path_root;
+}
+
+const char* pathparser_get_last_part(const struct path_part* root)
+{
+    if (root == NULL)
+    {
+        return ERROR(-DANOS_EINVARG);
+    }
+
+    const struct path_part* cur = root;
+    while (cur->next)
+    {
+        cur = cur->next;
+    }
+
+    return cur->part;
 }

@@ -7,6 +7,7 @@
 #include "memory/heap/kheap.h"
 #include "kernel.h"
 #include "config.h"
+#include "pparser.h"
 #include <stdint.h>
 
 #define DANOS_FAT16_SIGNATURE 0x29
@@ -27,8 +28,6 @@ typedef unsigned int FAT_ITEM_TYPE;
 #define FAT_FILE_ARCHIVED 0x20
 #define FAT_FILE_DEVICE 0x40
 #define FAT_FILE_RESERVED 0x80
-
-#define ATTR_LONG_NAME (FAT_FILE_READ_ONLY | FAT_FILE_HIDDEN | FAT_FILE_SYSTEM | FAT_FILE_VOLUME_LABEL)
 
 struct fat_header_extended
 {
@@ -193,11 +192,6 @@ int fat16_get_total_items_for_directory(struct disk* disk, uint32_t directory_st
 
         // Is the item unused
         if (item.filename[0] == 0xE5) // value from fat specification
-        {
-            continue;
-        }
-
-        if (item.attribute & ATTR_LONG_NAME) // item is long name entry -> ignore
         {
             continue;
         }
@@ -796,7 +790,7 @@ int fat16_close(void* private)
 void* fat16_opendir(struct disk* disk, struct path_part* path)
 {
     int err_code = 0;
-    struct fat_directory_descriptor* descriptor = 0;
+    struct fat_file_descriptor* descriptor = 0;
 
     struct fat_item* item = fat16_get_directory_entry(disk, path);
     if (!item)
@@ -811,14 +805,16 @@ void* fat16_opendir(struct disk* disk, struct path_part* path)
         goto err_out;
     }
 
-    // descriptor = kzalloc(sizeof(struct fat_directory_descriptor));
-    // if (!descriptor)
-    // {
-    //     err_code = -DANOS_ENOMEM;
-    //     goto err_out;
-    // }
+    descriptor = kzalloc(sizeof(struct fat_file_descriptor));
+    if (!descriptor)
+    {
+        err_code = -DANOS_ENOMEM;
+        goto err_out;
+    }
 
-    // descriptor->directory = item->directory;
+    descriptor->item = item;
+    descriptor->pos = 0;
+
     return descriptor;
 
 err_out:
