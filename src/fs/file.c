@@ -293,7 +293,7 @@ struct dirent* readdir(int fd)
         return dirent;
     }
 
-    dirent = desc->filesystem->readdir(desc->private_data);
+    dirent = desc->filesystem->readdir(desc->disk, desc->private_data);
     return dirent;
 }
 

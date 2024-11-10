@@ -130,7 +130,7 @@ int fat16_seek(void* private, uint32_t offset, FILE_SEEK_MODE seek_mode);
 int fat16_stat(struct disk* disk, void* private, struct file_stat* stat);
 int fat16_close(void* private);
 void* fat16_opendir(struct disk* disk, struct path_part* path);
-struct dirent* fat16_readdir(void* private);
+struct dirent* fat16_readdir(struct disk* disk, void* private);
 
 struct filesystem fat16_fs =
 {
@@ -596,8 +596,8 @@ struct fat_item* fat16_new_fat_item_for_directory_item(struct disk* disk, struct
         return f_item;
     }
 
-    f_item->type = FAT_ITEM_TYPE_FILE;
     f_item->item = fat16_clone_directory_item(item, sizeof(struct fat_directory_item));
+    f_item->type = FAT_ITEM_TYPE_FILE;
     return f_item;
 }
 
@@ -826,7 +826,76 @@ err_out:
     return ERROR(err_code);
 }
 
-struct dirent* fat16_readdir(void* private)
+struct dirent* fat16_readdir(struct disk* disk, void* private)
 {
-    return NULL;
+    struct fat_file_descriptor *descriptor = private;
+    struct fat_item *descriptor_item = descriptor->item;
+    struct fat_directory* directory = 0;
+    struct dirent *dirent = 0;
+    struct fat_item *cur_item = 0;
+
+    if (descriptor_item->type != FAT_ITEM_TYPE_DIRECTORY)
+    {
+        goto err_out;
+    }
+
+    directory = descriptor_item->directory;
+    if (directory->total <= descriptor->pos)
+    {
+        // no more elements to read
+        goto out;
+    }
+
+    dirent = kzalloc(sizeof(struct dirent));
+    if (!dirent)
+    {
+        // TODO: implement errno? https://www.man7.org/linux/man-pages/man3/readdir.3.html
+        goto err_out;
+    }
+
+    cur_item = fat16_new_fat_item_for_directory_item(disk, &directory->item[descriptor->pos]);
+    char name[DANOS_MAX_PATH];
+    if (cur_item->type == FAT_ITEM_TYPE_DIRECTORY)
+    {
+        fat16_get_full_relative_filename(cur_item->directory->item, name, sizeof(name));
+        dirent->d_name = kzalloc(sizeof(name));
+        strncpy(dirent->d_name, name, sizeof(name)); // TODO: Test with names longer than 8 chars
+        dirent->d_namelen = sizeof(cur_item->directory->item->filename);
+        dirent->d_type = DT_DIR;
+        descriptor->pos++;
+        goto out;
+    }
+
+    fat16_get_full_relative_filename(cur_item->item, name, sizeof(name));
+    dirent->d_name = kzalloc(sizeof(name));
+    strncpy(dirent->d_name, name, sizeof(name)); // TODO: Extension
+    dirent->d_namelen = sizeof(cur_item->item->filename);
+    dirent->d_type = DT_REG;
+    descriptor->pos++;
+    goto out;
+
+err_out:
+    if (dirent)
+    {
+        kfree(dirent);
+        dirent = NULL;
+    }
+
+    if (cur_item && cur_item->type == FAT_ITEM_TYPE_DIRECTORY)
+    {
+        // TODO: Check!
+        fat16_free_directory(cur_item->directory);
+        kfree(cur_item);
+    }
+
+    if (cur_item && cur_item->type == FAT_ITEM_TYPE_FILE)
+    {
+        // TODO: Check!
+        kfree(cur_item->item);
+        kfree(cur_item);
+    }
+    cur_item = NULL;
+
+out:
+    return dirent;
 }

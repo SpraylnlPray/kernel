@@ -50,7 +50,7 @@ typedef int (*FS_SEEK_FUNCTION)(void* private, uint32_t offset, FILE_SEEK_MODE s
 typedef int (*FS_STAT_FUNCTION)(struct disk* disk, void* private, struct file_stat* stat);
 typedef int (*FS_CLOSE_FUNCTION)(void* private);
 typedef void* (*FS_OPEN_DIR_FUNCTION)(struct disk* disk, struct path_part* path);
-typedef struct dirent* (*FS_READ_DIR_FUNCTION)(void* private);
+typedef struct dirent* (*FS_READ_DIR_FUNCTION)(struct disk* disk, void* private);
 
 struct filesystem
 {
@@ -100,7 +100,7 @@ enum
 
 struct dirent
 {
-    const char* d_name;
+    char* d_name;
     uint8_t d_namelen;
     D_TYPE d_type;
 };
