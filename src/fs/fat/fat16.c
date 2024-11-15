@@ -843,6 +843,7 @@ static struct fat_directory_item* fat16_get_non_long_fat_item(struct disk* disk,
     return dir_item;
 }
 
+static struct dirent* prev_dirent = NULL;
 struct dirent* fat16_readdir(struct disk* disk, void* private)
 {
     struct fat_file_descriptor *descriptor = private;
@@ -850,6 +851,12 @@ struct dirent* fat16_readdir(struct disk* disk, void* private)
     struct fat_directory* directory = 0;
     struct dirent *dirent = 0;
     struct fat_directory_item *cur_item = 0;
+
+    if (prev_dirent != NULL)
+    {
+        kfree(prev_dirent);
+        prev_dirent = NULL;
+    }
 
     if (descriptor_item->type != FAT_ITEM_TYPE_DIRECTORY)
     {
@@ -900,6 +907,13 @@ err_out:
         dirent = NULL;
     }
 
+    if (prev_dirent)
+    {
+        kfree(prev_dirent);
+        prev_dirent = NULL;
+    }
+
 out:
-    return dirent; // TODO: There's a memory leak here! dirent needs to be freed at some point
+    prev_dirent = dirent;
+    return dirent;
 }
