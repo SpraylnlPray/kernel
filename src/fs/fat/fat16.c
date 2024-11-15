@@ -833,22 +833,13 @@ static struct fat_directory_item* fat16_get_non_long_fat_item(struct disk* disk,
     struct fat_directory_item* dir_item = &directory->item[descriptor->pos];
     if (dir_item->attribute & ATTR_LONG_NAME)
     {
-        goto skip_one;
+        descriptor->pos++;
+        if (descriptor->pos >= directory->total)
+            return NULL;
+
+        dir_item = &directory->item[descriptor->pos];
     }
 
-    goto out;
-
-skip_one:
-    descriptor->pos++;
-    
-    if (descriptor->pos >= directory->total)
-    {
-        return NULL;
-    }
-
-    dir_item = &directory->item[descriptor->pos];
-
-out:
     return dir_item;
 }
 
@@ -887,23 +878,19 @@ struct dirent* fat16_readdir(struct disk* disk, void* private)
     }
 
     char name[DANOS_MAX_PATH];
+    fat16_get_full_relative_filename(cur_item, name, sizeof(name));
+    dirent->d_name = kzalloc(sizeof(name));
+    strncpy(dirent->d_name, name, sizeof(name)); // TODO: Test with names longer than 8 chars
+    dirent->d_namelen = sizeof(dirent->d_name);
+    descriptor->pos++;
+
     if (cur_item->attribute == FAT_FILE_SUBDIRECTORY)
     {
-        fat16_get_full_relative_filename(cur_item, name, sizeof(name));
-        dirent->d_name = kzalloc(sizeof(name));
-        strncpy(dirent->d_name, name, sizeof(name)); // TODO: Test with names longer than 8 chars
-        dirent->d_namelen = sizeof(dirent->d_name);
         dirent->d_type = DT_DIR;
-        descriptor->pos++;
         goto out;
     }
 
-    fat16_get_full_relative_filename(cur_item, name, sizeof(name));
-    dirent->d_name = kzalloc(sizeof(name));
-    strncpy(dirent->d_name, name, sizeof(name));
-    dirent->d_namelen = strlen(dirent->d_name);
     dirent->d_type = DT_REG;
-    descriptor->pos++;
     goto out;
 
 err_out:
