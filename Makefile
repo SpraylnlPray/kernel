@@ -28,13 +28,35 @@ all: ./bin/os.bin
 	sudo mount -t vfat ./bin/os.bin /mnt/d
 	# Copy a file over
 	sudo cp ./hello.txt /mnt/d
-	sudo mkdir /mnt/d/hello
-	sudo cp ./hello.txt /mnt/d/hello
+	sudo mkdir /mnt/d/test1
+	sudo mkdir /mnt/d/test2
+	sudo mkdir /mnt/d/test3
+	sudo mkdir /mnt/d/test1/test11
+	sudo mkdir /mnt/d/test1/test12
+	sudo mkdir /mnt/d/test2/test21
+	sudo cp ./hello.txt /mnt/d/test1
+	sudo mv /mnt/d/test1/hello.txt /mnt/d/test1/hello1.txt 
+	sudo cp ./hello.txt /mnt/d/test1
+	sudo mv /mnt/d/test1/hello.txt /mnt/d/test1/hello2.txt 
+	sudo cp ./hello.txt /mnt/d/test1
+	sudo cp ./hello.txt /mnt/d/test1/test11
+	sudo mv /mnt/d/test1/test11/hello.txt /mnt/d/test1/test11/hello1.txt 
+	sudo cp ./hello.txt /mnt/d/test1/test11
+	sudo mkdir /mnt/d/test1/test11/test111
+	sudo cp ./hello.txt /mnt/d/test2
+	sudo mv /mnt/d/test2/hello.txt /mnt/d/test2/hello1.txt 
+	sudo cp ./hello.txt /mnt/d/test2
+	sudo mv /mnt/d/test2/hello.txt /mnt/d/test2/hello2.txt 
+	sudo cp ./hello.txt /mnt/d/test2
 	sudo cp ./programs/blank/blank.elf /mnt/d
 	sudo cp ./programs/shell/shell.elf /mnt/d
 	sudo cp ./programs/keyboard/keyboard.elf /mnt/d
 	sudo ls -la /mnt/d
-	sudo ls -la /mnt/d/hello
+	sudo ls -la /mnt/d/test1
+	sudo ls -la /mnt/d/test1/test11
+	sudo ls -la /mnt/d/test1/test12
+	sudo ls -la /mnt/d/test2
+	sudo ls -la /mnt/d/test2/test21
 	sudo umount /mnt/d
 	@echo "## $@ finished"
 

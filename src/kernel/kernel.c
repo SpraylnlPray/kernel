@@ -148,6 +148,17 @@ void kernel_page()
     paging_switch(kernel_chunk);
 }
 
+static int debug_active = 0;
+void set_debug_active(int active)
+{
+    debug_active = active;
+}
+
+int get_debug_active()
+{
+    return debug_active;
+}
+
 struct tss tss;
 
 struct gdt gdt_real[DANOS_TOTAL_GDT_SEGMENTS];
@@ -198,10 +209,10 @@ void kernel_main()
     // Enable paging
     enable_paging();
 
-    int fd = opendir("0:/hello");
+    int fd = opendir("0:/test1");
     if (!fd)
     {
-        panic("Couldn't open 0:/hello\n");
+        panic("Couldn't open 0:/test1\n");
     }
 
     struct dirent* dirent = readdir(fd);

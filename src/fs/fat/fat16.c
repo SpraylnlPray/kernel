@@ -29,6 +29,8 @@ typedef unsigned int FAT_ITEM_TYPE;
 #define FAT_FILE_DEVICE 0x40
 #define FAT_FILE_RESERVED 0x80
 
+#define ATTR_LONG_NAME (FAT_FILE_READ_ONLY | FAT_FILE_HIDDEN | FAT_FILE_SYSTEM | FAT_FILE_VOLUME_LABEL)
+
 struct fat_header_extended
 {
     uint8_t drive_number;
@@ -167,7 +169,6 @@ int fat16_get_total_items_for_directory(struct disk* disk, uint32_t directory_st
 {
     struct fat_directory_item item;
     struct fat_private* fat_private = disk->fs_private;
-
     int res = 0;
     int i = 0;
     int directory_start_pos = directory_start_sector * disk->sector_size;
@@ -826,13 +827,38 @@ err_out:
     return ERROR(err_code);
 }
 
+static struct fat_directory_item* fat16_get_non_long_fat_item(struct disk* disk, struct fat_directory* directory, struct fat_file_descriptor* descriptor)
+{
+    // TODO: Handle multiple elements that are part of a long name, see page 31 of https://academy.cba.mit.edu/classes/networking_communications/SD/FAT.pdf
+    struct fat_directory_item* dir_item = &directory->item[descriptor->pos];
+    if (dir_item->attribute & ATTR_LONG_NAME)
+    {
+        goto skip_one;
+    }
+
+    goto out;
+
+skip_one:
+    descriptor->pos++;
+    
+    if (descriptor->pos >= directory->total)
+    {
+        return NULL;
+    }
+
+    dir_item = &directory->item[descriptor->pos];
+
+out:
+    return dir_item;
+}
+
 struct dirent* fat16_readdir(struct disk* disk, void* private)
 {
     struct fat_file_descriptor *descriptor = private;
     struct fat_item *descriptor_item = descriptor->item;
     struct fat_directory* directory = 0;
     struct dirent *dirent = 0;
-    struct fat_item *cur_item = 0;
+    struct fat_directory_item *cur_item = 0;
 
     if (descriptor_item->type != FAT_ITEM_TYPE_DIRECTORY)
     {
@@ -853,23 +879,29 @@ struct dirent* fat16_readdir(struct disk* disk, void* private)
         goto err_out;
     }
 
-    cur_item = fat16_new_fat_item_for_directory_item(disk, &directory->item[descriptor->pos]);
-    char name[DANOS_MAX_PATH];
-    if (cur_item->type == FAT_ITEM_TYPE_DIRECTORY)
+    cur_item = fat16_get_non_long_fat_item(disk, directory, descriptor);
+    if (cur_item == NULL)
     {
-        fat16_get_full_relative_filename(cur_item->directory->item, name, sizeof(name));
+        // No more elements to read
+        goto out;
+    }
+
+    char name[DANOS_MAX_PATH];
+    if (cur_item->attribute == FAT_FILE_SUBDIRECTORY)
+    {
+        fat16_get_full_relative_filename(cur_item, name, sizeof(name));
         dirent->d_name = kzalloc(sizeof(name));
         strncpy(dirent->d_name, name, sizeof(name)); // TODO: Test with names longer than 8 chars
-        dirent->d_namelen = sizeof(cur_item->directory->item->filename);
+        dirent->d_namelen = sizeof(dirent->d_name);
         dirent->d_type = DT_DIR;
         descriptor->pos++;
         goto out;
     }
 
-    fat16_get_full_relative_filename(cur_item->item, name, sizeof(name));
+    fat16_get_full_relative_filename(cur_item, name, sizeof(name));
     dirent->d_name = kzalloc(sizeof(name));
-    strncpy(dirent->d_name, name, sizeof(name)); // TODO: Extension
-    dirent->d_namelen = sizeof(cur_item->item->filename);
+    strncpy(dirent->d_name, name, sizeof(name));
+    dirent->d_namelen = strlen(dirent->d_name);
     dirent->d_type = DT_REG;
     descriptor->pos++;
     goto out;
@@ -881,21 +913,6 @@ err_out:
         dirent = NULL;
     }
 
-    if (cur_item && cur_item->type == FAT_ITEM_TYPE_DIRECTORY)
-    {
-        // TODO: Check!
-        fat16_free_directory(cur_item->directory);
-        kfree(cur_item);
-    }
-
-    if (cur_item && cur_item->type == FAT_ITEM_TYPE_FILE)
-    {
-        // TODO: Check!
-        kfree(cur_item->item);
-        kfree(cur_item);
-    }
-    cur_item = NULL;
-
 out:
-    return dirent;
+    return dirent; // TODO: There's a memory leak here! dirent needs to be freed at some point
 }

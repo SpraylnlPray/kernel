@@ -14,5 +14,7 @@ void kernel_registers();
 void print(const char *str);
 void panic(const char* msg);
 void terminal_writechar(char c, char color);
+int get_debug_active();
+void set_debug_active(int active);
 
 #endif
