@@ -209,10 +209,10 @@ void kernel_main()
     // Enable paging
     enable_paging();
 
-    int fd = opendir("0:/test1");
+    int fd = opendir("0:/src/gdt");
     if (!fd)
     {
-        panic("Couldn't open 0:/test1\n");
+        panic("Couldn't open 0:/src/gdt\n");
     }
 
     struct dirent* dirent = readdir(fd);
