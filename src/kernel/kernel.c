@@ -209,28 +209,6 @@ void kernel_main()
     // Enable paging
     enable_paging();
 
-    int fd = opendir("0:/src/gdt");
-    if (!fd)
-    {
-        panic("Couldn't open 0:/src/gdt\n");
-    }
-
-    struct dirent* dirent = readdir(fd);
-    if (!dirent)
-    {
-        panic("Couldn't readdir fd\n");
-    }
-    
-    while(dirent != NULL)
-    {
-        print("entry name: ");
-        print(dirent->d_name);
-        print("\n");
-        dirent = readdir(fd);
-    }
-
-    closedir(fd);
-
     // Register kernel commands
     isr80h_register_commands();
 

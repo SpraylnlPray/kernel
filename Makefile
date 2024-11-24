@@ -30,6 +30,7 @@ all: ./bin/os.bin
 	sudo cp ./programs/blank/blank.elf /mnt/d
 	sudo cp ./programs/shell/shell.elf /mnt/d
 	sudo cp ./programs/keyboard/keyboard.elf /mnt/d
+	sudo cp ./programs/ls/ls.elf /mnt/d
 	sudo cp -r ./src /mnt/d/src
 	sudo ls -la /mnt/d
 	sudo ls -la /mnt/d/src
@@ -69,6 +70,7 @@ programs:
 	cd ./programs/blank && $(MAKE) all
 	cd ./programs/shell && $(MAKE) all
 	cd ./programs/keyboard && $(MAKE) all
+	cd ./programs/ls && $(MAKE) all
 
 .PHONY:programs_clean
 programs_clean:
@@ -76,6 +78,7 @@ programs_clean:
 	cd ./programs/blank && $(MAKE) clean
 	cd ./programs/shell && $(MAKE) clean
 	cd ./programs/keyboard && $(MAKE) clean
+	cd ./programs/ls && $(MAKE) clean
 
 .PHONY:clean
 clean: programs_clean
