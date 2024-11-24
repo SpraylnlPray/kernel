@@ -332,3 +332,23 @@ int fclose(int fd)
 out:
     return res;
 }
+
+int closedir(int fd)
+{
+    int res = 0;
+    struct file_descriptor* desc = file_get_descriptor(fd);
+    if (!desc)
+    {
+        res = -DANOS_EIO;
+        goto out;
+    }
+
+    res = desc->filesystem->closedir(desc->private_data);
+    if (res == DANOS_ALL_OK)
+    {
+        file_free_descriptor(desc);
+    }
+
+out:
+    return res;
+}

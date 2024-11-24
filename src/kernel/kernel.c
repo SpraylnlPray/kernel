@@ -229,6 +229,8 @@ void kernel_main()
         dirent = readdir(fd);
     }
 
+    closedir(fd);
+
     // Register kernel commands
     isr80h_register_commands();
 

@@ -133,6 +133,7 @@ int fat16_stat(struct disk* disk, void* private, struct file_stat* stat);
 int fat16_close(void* private);
 void* fat16_opendir(struct disk* disk, struct path_part* path);
 struct dirent* fat16_readdir(struct disk* disk, void* private);
+int fat16_closedir(void* private);
 
 struct filesystem fat16_fs =
 {
@@ -144,6 +145,7 @@ struct filesystem fat16_fs =
     .close = fat16_close,
     .opendir = fat16_opendir,
     .readdir = fat16_readdir,
+    .closedir = fat16_closedir,
 };
 
 struct filesystem* fat16_init()
@@ -843,7 +845,8 @@ static struct fat_directory_item* fat16_get_non_long_fat_item(struct disk* disk,
     return dir_item;
 }
 
-static struct dirent* prev_dirent = NULL;
+// This is not save for multithreading!!
+static struct dirent* prev_dirent = NULL; // TODO: Find better solution for this
 struct dirent* fat16_readdir(struct disk* disk, void* private)
 {
     struct fat_file_descriptor *descriptor = private;
@@ -916,4 +919,16 @@ err_out:
 out:
     prev_dirent = dirent;
     return dirent;
+}
+
+int fat16_closedir(void* private)
+{
+    if (prev_dirent)
+    {
+        kfree(prev_dirent);
+        prev_dirent = NULL;
+    }
+
+    fat16_free_file_descriptor((struct fat_file_descriptor*) private);
+    return 0;
 }
