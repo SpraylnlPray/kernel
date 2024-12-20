@@ -13,7 +13,6 @@ int main(int argc, char** argv)
         danos_terminal_readline(buf, sizeof(buf), true);
         print("\n");
         danos_system_run(buf);
-
     };
     return 0;
 }

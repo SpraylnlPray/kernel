@@ -27,6 +27,7 @@ all: ./bin/os.bin
 	# TODO: Create /mnt/ dir!
 	sudo mount -t vfat ./bin/os.bin /mnt/d
 	# Copy a file over
+	sudo cp hello.txt /mnt/d
 	sudo cp ./programs/blank/blank.elf /mnt/d
 	sudo cp ./programs/shell/shell.elf /mnt/d
 	sudo cp ./programs/keyboard/keyboard.elf /mnt/d

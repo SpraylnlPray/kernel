@@ -5,6 +5,7 @@
 #include "heap.h"
 #include "process.h"
 #include "keyboard.h"
+#include "file.h"
 
 void isr80h_register_commands()
 {
@@ -22,4 +23,6 @@ void isr80h_register_commands()
     isr80h_register_command(SYSTEM_COMMAND11_GET_KEYBOARD_LAYOUT_COUNT, isr80h_command11_get_keyboard_layout_count);
     isr80h_register_command(SYSTEM_COMMAND12_GET_ACTIVE_KEYBOARD_LAYOUT_ID, isr80h_command12_get_active_keyboard_layout_id);
     isr80h_register_command(SYSTEM_COMMAND13_SET_ACTIVE_KEYBOARD_LAYOUT, isr80h_command13_set_active_keyboard_layout);
+    isr80h_register_command(SYSTEM_COMMAND14_FSTAT, isr80h_command14_fstat);
+    isr80h_register_command(SYSTEM_COMMAND15_FOPEN, isr80h_command15_fopen);
 }

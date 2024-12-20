@@ -14,7 +14,9 @@ global danos_exit:function
 global danos_get_keyboard_layouts:function
 global danos_get_keyboard_layout_count:function
 global danos_get_active_keyboard_layout_id:function
-global danos_set_active_keyboard_layout: function
+global danos_set_active_keyboard_layout:function
+global danos_fstat:function
+global danos_fopen:function
 
 ; void print(const char* message)
 print:
@@ -186,6 +188,36 @@ danos_set_active_keyboard_layout:
     int 0x80
 
     add esp, 4
+
+    pop ebp
+    ret
+
+; int danos_fstat(int fd, struct file_stat* stat)
+danos_fstat:
+    push ebp
+    mov ebp, esp
+
+    mov eax, 14 ; Command 14 fstat
+    push dword[ebp + 8] ; Variable "stat"
+    push dword[ebp + 12] ; Variable "fd"
+    int 0x80
+
+    add esp, 8
+
+    pop ebp
+    ret
+
+; int danos_fopen(const char* path, const char* mode)
+danos_fopen:
+    push ebp
+    mov ebp, esp
+
+    mov eax, 15 ; Command 15 fopen
+    push dword[ebp + 8] ; Variable "mode"
+    push dword[ebp + 12] ; Variable "path"
+    int 0x80
+
+    add esp, 8
 
     pop ebp
     ret

@@ -677,6 +677,12 @@ void* fat16_open(struct disk* disk, struct path_part* path, FILE_MODE mode)
         goto err_out;
     }
 
+    if (descriptor->item->type != FAT_ITEM_TYPE_FILE)
+    {
+        err_code = -DANOS_EINVARG;
+        goto err_out;
+    }
+
     descriptor->pos = 0;
     return descriptor;
 

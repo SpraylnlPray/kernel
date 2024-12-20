@@ -34,5 +34,6 @@ void* danos_get_keyboard_layouts(char** buf, int size);
 int danos_get_keyboard_layout_count();
 void* danos_get_active_keyboard_layout_id(char* buf, int size);
 int danos_set_active_keyboard_layout(char* id);
+int danos_fopen(const char* path, const char* mode);
 
 #endif

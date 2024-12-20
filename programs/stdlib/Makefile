@@ -1,4 +1,4 @@
-FILES=./build/start.asm.o ./build/start.o ./build/danos.asm.o ./build/stdlib.o ./build/stdio.o ./build/danos.o ./build/string.o ./build/memory.o ./build/keyboard.o
+FILES=./build/start.asm.o ./build/start.o ./build/danos.asm.o ./build/stdlib.o ./build/stdio.o ./build/danos.o ./build/string.o ./build/memory.o ./build/keyboard.o ./build/file.o
 INCLUDES=
 BUILD_DIRS= ./build
 FLAGS= -g -falign-jumps -falign-functions -falign-labels -falign-loops -fstrength-reduce -fomit-frame-pointer -finline-functions -Wno-unused-function -fno-builtin -Werror -Wno-unused-label -Wno-cpp -Wno-unused-parameter -nostdlib -nostartfiles -nodefaultlibs -Wall -O0 -Iinc
@@ -49,6 +49,11 @@ all: directories ${FILES}
 ./build/keyboard.o: ./src/keyboard.c
 	@echo "$@ start"
 	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/keyboard.c -o ./build/keyboard.o
+	@echo "$@ finished"
+
+./build/file.o: ./src/file.c
+	@echo "$@ start"
+	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/file.c -o ./build/file.o
 	@echo "$@ finished"
 
 clean:
