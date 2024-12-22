@@ -3,10 +3,10 @@
 #include "stdlib.h"
 #include "danos.h"
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-    print ("DanOS v1.0.0\n");
-    while(1)
+    print("DanOS v1.0.0\n");
+    while (1)
     {
         print("> ");
         char buf[1024];

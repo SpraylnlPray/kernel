@@ -6,9 +6,9 @@
 #include "string/string.h"
 #include "classic.h"
 
-static struct keyboard* keyboard_list_head = 0;
-static struct keyboard* keyboard_list_last = 0;
-static struct keyboard_layout* active_layout = 0;
+static struct keyboard *keyboard_list_head = 0;
+static struct keyboard *keyboard_list_last = 0;
+static struct keyboard_layout *active_layout = 0;
 
 void keyboard_init()
 {
@@ -16,7 +16,7 @@ void keyboard_init()
     // TODO: Set active layout here? currently it is done in classic_keyboard_init()
 }
 
-int keyboard_insert(struct keyboard* keyboard)
+int keyboard_insert(struct keyboard *keyboard)
 {
     int res = 0;
 
@@ -45,7 +45,7 @@ out:
 
 int keyboard_get_layout_count()
 {
-    struct keyboard* keyboard = keyboard_list_head;
+    struct keyboard *keyboard = keyboard_list_head;
     int count = 0;
     while (keyboard != NULL)
     {
@@ -56,9 +56,9 @@ int keyboard_get_layout_count()
     return count;
 }
 
-void keyboard_get_available_layouts(char** buf, uint32_t size)
+void keyboard_get_available_layouts(char **buf, uint32_t size)
 {
-    struct keyboard* keyboard = keyboard_list_head;
+    struct keyboard *keyboard = keyboard_list_head;
     int count = 0;
     while (keyboard != NULL && count < size)
     {
@@ -72,7 +72,7 @@ void keyboard_get_available_layouts(char** buf, uint32_t size)
     }
 }
 
-void keyboard_get_active_layout_id(char* buf, uint32_t size)
+void keyboard_get_active_layout_id(char *buf, uint32_t size)
 {
     if (size < KEYBOARD_LAYOUT_ID_LENGTH)
         return;
@@ -80,12 +80,12 @@ void keyboard_get_active_layout_id(char* buf, uint32_t size)
     strncpy(buf, keyboard_get_active_layout()->identifier, size);
 }
 
-int keyboard_set_layout(char* layout_id)
+int keyboard_set_layout(char *layout_id)
 {
     if (layout_id == NULL)
         return -DANOS_EINVARG;
-    
-    struct keyboard* keyboard = keyboard_list_head;
+
+    struct keyboard *keyboard = keyboard_list_head;
     while (keyboard != NULL)
     {
         for (int i = 0; i < keyboard->layout_count; i++)
@@ -103,7 +103,7 @@ int keyboard_set_layout(char* layout_id)
     return -DANOS_EINVARG;
 }
 
-struct keyboard_layout* keyboard_get_active_layout()
+struct keyboard_layout *keyboard_get_active_layout()
 {
     return active_layout;
 }
@@ -114,46 +114,46 @@ void keyboard_add_layout(struct keyboard *keyboard, struct keyboard_layout *layo
     keyboard->layout_count++;
 }
 
-void keyboard_set_active_layout(struct keyboard_layout* layout)
+void keyboard_set_active_layout(struct keyboard_layout *layout)
 {
     active_layout = layout;
 }
 
-static int keyboard_get_tail_index(struct process* process)
+static int keyboard_get_tail_index(struct process *process)
 {
     return process->keyboard.tail % sizeof(process->keyboard.buffer);
 }
 
-void keyboard_backspace(struct process* process)
+void keyboard_backspace(struct process *process)
 {
     process->keyboard.tail -= 1;
     int real_index = keyboard_get_tail_index(process);
     process->keyboard.buffer[real_index] = 0x00;
 }
 
-void keyboard_set_capslock(struct keyboard* keyboard, KEYBOARD_CAPSLOCK_STATE state)
+void keyboard_set_capslock(struct keyboard *keyboard, KEYBOARD_CAPSLOCK_STATE state)
 {
     keyboard->capslock_state = state;
 }
 
-void keyboard_set_shift(struct keyboard* keyboard, KEYBOARD_SHIFT_STATE state)
+void keyboard_set_shift(struct keyboard *keyboard, KEYBOARD_SHIFT_STATE state)
 {
     keyboard->shift_state = state;
 }
 
-KEYBOARD_CAPSLOCK_STATE keyboard_get_capslock(struct keyboard* keyboard)
+KEYBOARD_CAPSLOCK_STATE keyboard_get_capslock(struct keyboard *keyboard)
 {
     return keyboard->capslock_state;
 }
 
-KEYBOARD_SHIFT_STATE keyboard_get_shift(struct keyboard* keyboard)
+KEYBOARD_SHIFT_STATE keyboard_get_shift(struct keyboard *keyboard)
 {
     return keyboard->shift_state;
 }
 
 void keyboard_push(char c)
 {
-    struct process* process = process_current();
+    struct process *process = process_current();
     if (!process)
     {
         return;
@@ -181,8 +181,8 @@ char keyboard_pop()
         return 0;
     }
 
-    struct process* process = task_current()->process;
-    int real_index = process->keyboard.head  % sizeof(process->keyboard.buffer);
+    struct process *process = task_current()->process;
+    int real_index = process->keyboard.head % sizeof(process->keyboard.buffer);
     char c = process->keyboard.buffer[real_index];
     if (c == 0x00)
     {

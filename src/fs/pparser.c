@@ -9,12 +9,12 @@
 static int pathparser_path_valid_format(const char *filename)
 {
     int len = strnlen(filename, DANOS_MAX_PATH);
-    return (len >= 3 && is_digit(filename[0]) && memcmp((void*)&filename[1], ":/", 2) == 0);
+    return (len >= 3 && is_digit(filename[0]) && memcmp((void *)&filename[1], ":/", 2) == 0);
 }
 
 static int pathparser_get_drive_by_path(const char **path)
 {
-    if(!pathparser_path_valid_format(*path))
+    if (!pathparser_path_valid_format(*path))
     {
         return -DANOS_EBADPATH;
     }
@@ -27,20 +27,20 @@ static int pathparser_get_drive_by_path(const char **path)
     return drive_no;
 }
 
-static struct path_root* pathparser_create_root(int drive_number)
+static struct path_root *pathparser_create_root(int drive_number)
 {
-    struct path_root* path_r = kzalloc(sizeof(struct path_root));
+    struct path_root *path_r = kzalloc(sizeof(struct path_root));
     path_r->drive_no = drive_number;
     path_r->first = 0;
-    
+
     return path_r;
 }
 
-static const char* pathparser_get_path_part(const char **path)
+static const char *pathparser_get_path_part(const char **path)
 {
     char *result_path_part = kzalloc(DANOS_MAX_PATH);
     int i = 0;
-    while(**path != '/' && **path != 0x00)
+    while (**path != '/' && **path != 0x00)
     {
         result_path_part[i] = **path;
         *path += 1;
@@ -62,7 +62,7 @@ static const char* pathparser_get_path_part(const char **path)
     return result_path_part;
 }
 
-struct path_part* pathparser_parse_path_part(struct path_part *last_part, const char **path)
+struct path_part *pathparser_parse_path_part(struct path_part *last_part, const char **path)
 {
     const char *path_part_str = pathparser_get_path_part(path);
     if (!path_part_str)
@@ -88,7 +88,7 @@ void pathparser_free(struct path_root *root)
     while (current)
     {
         struct path_part *next_part = current->next;
-        kfree((void*) current->part);
+        kfree((void *)current->part);
         kfree(current);
         current = next_part;
     }
@@ -96,7 +96,7 @@ void pathparser_free(struct path_root *root)
     kfree(root);
 }
 
-struct path_root* pathparser_parse(const char *path, const char *current_directory_path)
+struct path_root *pathparser_parse(const char *path, const char *current_directory_path)
 {
     int res = 0;
     const char *temp_path = path;
@@ -127,7 +127,7 @@ struct path_root* pathparser_parse(const char *path, const char *current_directo
 
     path_root->first = first_part;
     struct path_part *part = pathparser_parse_path_part(first_part, &temp_path);
-    while(part)
+    while (part)
     {
         part = pathparser_parse_path_part(part, &temp_path);
     }
@@ -136,14 +136,14 @@ out:
     return path_root;
 }
 
-const char* pathparser_get_last_part(const struct path_part* root)
+const char *pathparser_get_last_part(const struct path_part *root)
 {
     if (root == NULL)
     {
         return ERROR(-DANOS_EINVARG);
     }
 
-    const struct path_part* cur = root;
+    const struct path_part *cur = root;
     while (cur->next)
     {
         cur = cur->next;

@@ -6,9 +6,9 @@
 #include "string/string.h"
 #include "kernel.h"
 
-void* isr80h_command6_process_load_start(struct interrupt_frame *frame)
+void *isr80h_command6_process_load_start(struct interrupt_frame *frame)
 {
-    void* filename_usr_ptr = task_get_stack_item(task_current(), 0);
+    void *filename_usr_ptr = task_get_stack_item(task_current(), 0);
     char filename[DANOS_MAX_PATH];
     int res = copy_string_from_task(task_current(), filename_usr_ptr, filename, sizeof(filename));
     if (res < 0)
@@ -20,7 +20,7 @@ void* isr80h_command6_process_load_start(struct interrupt_frame *frame)
     strcpy(path, "0:/");
     strcpy(path + 3, filename);
 
-    struct process* process = 0;
+    struct process *process = 0;
     res = process_load_switch(path, &process);
     if (res < 0)
     {
@@ -34,22 +34,22 @@ out:
     return 0;
 }
 
-void* isr80h_command7_invoke_system_command(struct interrupt_frame* frame)
+void *isr80h_command7_invoke_system_command(struct interrupt_frame *frame)
 {
-    struct command_argument* arguments = task_virtual_address_to_physical(task_current(), task_get_stack_item(task_current(), 0));
+    struct command_argument *arguments = task_virtual_address_to_physical(task_current(), task_get_stack_item(task_current(), 0));
     if (!arguments || strlen(arguments[0].argument) == 0)
     {
         return ERROR(-DANOS_EINVARG);
     }
 
-    struct command_argument* root_command_argument = &arguments[0];
-    const char* program_name = root_command_argument->argument;
+    struct command_argument *root_command_argument = &arguments[0];
+    const char *program_name = root_command_argument->argument;
 
     char path[DANOS_MAX_PATH];
     strcpy(path, "0:/");
     strncpy(path + 3, program_name, sizeof(path));
 
-    struct process* process = 0;
+    struct process *process = 0;
     int res = process_load_switch(path, &process);
     if (res < 0)
     {
@@ -68,19 +68,19 @@ void* isr80h_command7_invoke_system_command(struct interrupt_frame* frame)
     return 0;
 }
 
-void* isr80h_command8_get_program_arguments(struct interrupt_frame* frame)
+void *isr80h_command8_get_program_arguments(struct interrupt_frame *frame)
 {
-    struct process* process = task_current()->process;
-    struct process_arguments* arguments = task_virtual_address_to_physical(task_current(), task_get_stack_item(task_current(), 0));
+    struct process *process = task_current()->process;
+    struct process_arguments *arguments = task_virtual_address_to_physical(task_current(), task_get_stack_item(task_current(), 0));
 
     process_get_arguments(process, &arguments->argc, &arguments->argv);
 
     return 0;
 }
 
-void* isr80h_command9_exit(struct interrupt_frame* frame)
+void *isr80h_command9_exit(struct interrupt_frame *frame)
 {
-    struct process* process = task_current()->process;
+    struct process *process = task_current()->process;
     process_terminate(process);
     task_next();
 

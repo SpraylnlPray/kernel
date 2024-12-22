@@ -13,8 +13,8 @@ struct path_part
     struct path_part *next;
 };
 
-struct path_root* pathparser_parse(const char *path, const char *current_directory_path);
+struct path_root *pathparser_parse(const char *path, const char *current_directory_path);
 void pathparser_free(struct path_root *root);
-const char* pathparser_get_last_part(const struct path_part* root);
+const char *pathparser_get_last_part(const struct path_part *root);
 
 #endif

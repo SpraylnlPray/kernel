@@ -14,7 +14,7 @@ void print_usage()
 
 void show_layout()
 {
-    char* id = malloc(KEYBOARD_LAYOUT_ID_LENGTH);
+    char *id = malloc(KEYBOARD_LAYOUT_ID_LENGTH);
     get_active_keyboard_layout_id(id, KEYBOARD_LAYOUT_ID_LENGTH);
     printf("Active keyboard layout: %s\n", id);
     free(id);
@@ -24,10 +24,10 @@ void list_layouts()
 {
     printf("Available keyboard layouts:\n");
     int count = get_layout_count();
-    char** available_layouts = (char**)malloc(sizeof(char*) * count);
+    char **available_layouts = (char **)malloc(sizeof(char *) * count);
     for (int i = 0; i < count; i++)
     {
-        available_layouts[i] = (char*)malloc(sizeof(char*) * KEYBOARD_LAYOUT_ID_LENGTH);
+        available_layouts[i] = (char *)malloc(sizeof(char *) * KEYBOARD_LAYOUT_ID_LENGTH);
     }
     get_keyboard_layouts(available_layouts, count);
 
@@ -40,7 +40,7 @@ void list_layouts()
     free(available_layouts);
 }
 
-void set_layout(char* layout)
+void set_layout(char *layout)
 {
     int ret = set_active_keyboard_layout(layout);
     if (ret < 0)
@@ -52,7 +52,7 @@ void set_layout(char* layout)
     printf("Set layout to %s\n", layout);
 }
 
-void handle_layout(int argc, char** argv)
+void handle_layout(int argc, char **argv)
 {
     // keyboard layout
     if (argc == 2)
@@ -95,7 +95,7 @@ void handle_layout(int argc, char** argv)
     return;
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     if (argc == 1)
     {

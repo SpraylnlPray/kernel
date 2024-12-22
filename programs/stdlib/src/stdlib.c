@@ -1,7 +1,7 @@
 #include "stdlib.h"
 #include "danos.h"
 
-char* itoa(int i)
+char *itoa(int i)
 {
     static char text[12]; // data is in local data; address stays the same
     int loc = 11;
@@ -13,7 +13,7 @@ char* itoa(int i)
         i = -i;
     }
 
-    while(i)
+    while (i)
     {
         text[--loc] = '0' - (i % 10);
         i /= 10;
@@ -24,16 +24,16 @@ char* itoa(int i)
 
     if (neg)
         text[--loc] = '-';
-    
+
     return &text[loc];
 }
 
-void* malloc(size_t size)
+void *malloc(size_t size)
 {
     return danos_malloc(size);
 }
 
-void free(void* ptr)
+void free(void *ptr)
 {
     return danos_free(ptr);
 }

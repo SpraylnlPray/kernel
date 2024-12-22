@@ -1,9 +1,9 @@
 #include "danos.h"
 #include "string.h"
 
-struct command_argument* danos_parse_command(const char* command, int max)
+struct command_argument *danos_parse_command(const char *command, int max)
 {
-    struct command_argument* root_command = 0;
+    struct command_argument *root_command = 0;
     char scommand[1025];
     if (max >= (int)sizeof(scommand))
     {
@@ -11,7 +11,7 @@ struct command_argument* danos_parse_command(const char* command, int max)
     }
 
     strncpy(scommand, command, sizeof(scommand)); // strtok modifies buffer, can't modify const char
-    char* token = strtok(scommand, " ");
+    char *token = strtok(scommand, " ");
 
     if (!token)
     {
@@ -27,11 +27,11 @@ struct command_argument* danos_parse_command(const char* command, int max)
     strncpy(root_command->argument, token, sizeof(root_command->argument));
     root_command->next = 0;
 
-    struct command_argument* current = root_command;
+    struct command_argument *current = root_command;
     token = strtok(NULL, " ");
     while (token != 0)
     {
-        struct command_argument* new_command = danos_malloc(sizeof(struct command_argument));
+        struct command_argument *new_command = danos_malloc(sizeof(struct command_argument));
         if (!new_command)
         {
             break;
@@ -59,7 +59,7 @@ int danos_getkey_block()
     return val;
 }
 
-void danos_terminal_readline(char* out, int max, bool output_while_typing)
+void danos_terminal_readline(char *out, int max, bool output_while_typing)
 {
     int i = 0;
     for (i = 0; i < max - 1; i++)
@@ -92,11 +92,11 @@ void danos_terminal_readline(char* out, int max, bool output_while_typing)
     out[i] = 0x00;
 }
 
-int danos_system_run(const char* command)
+int danos_system_run(const char *command)
 {
     char buf[1024];
     strncpy(buf, command, sizeof(buf));
-    struct command_argument* root_command_argument = danos_parse_command(buf, sizeof(buf));
+    struct command_argument *root_command_argument = danos_parse_command(buf, sizeof(buf));
 
     if (!root_command_argument)
     {

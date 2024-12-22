@@ -7,7 +7,7 @@
 static int heap_validate_table(void *ptr, void *end, struct heap_table *table)
 {
     int res = 0;
-    
+
     size_t table_size = (size_t)(end - ptr);
     size_t total_blocks = table_size / DANOS_HEAP_BLOCK_SIZE;
     if (table->total != total_blocks)
@@ -72,7 +72,7 @@ static int heap_get_entry_type(HEAP_BLOCK_TABLE_ENTRY entry)
 int heap_get_start_block(struct heap *heap, uint32_t total_blocks)
 {
     struct heap_table *table = heap->table;
-    int bc = 0; // from bs found free blocks
+    int bc = 0;  // from bs found free blocks
     int bs = -1; // block start index
 
     for (size_t i = 0; i < table->total; i++)
@@ -125,7 +125,7 @@ void heap_mark_blocks_taken(struct heap *heap, int start_block, int total_blocks
     {
         heap->table->entries[i] = entry;
         entry = HEAP_BLOCK_TABLE_ENTRY_TAKEN;
-        if (i != end_block -1)
+        if (i != end_block - 1)
         {
             entry |= HEAP_BLOCK_HAS_NEXT;
         }
@@ -153,7 +153,7 @@ out:
 
 void heap_mark_blocks_free(struct heap *heap, int starting_block)
 {
-    struct heap_table * table = heap->table;
+    struct heap_table *table = heap->table;
     for (int i = starting_block; i < (int)table->total; i++)
     {
         HEAP_BLOCK_TABLE_ENTRY entry = table->entries[i];

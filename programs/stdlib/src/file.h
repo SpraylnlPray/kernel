@@ -16,7 +16,7 @@ struct stat
     STAT_TYPE type;
 };
 
-int fopen(const char* path, const char* mode);
+int fopen(const char *path, const char *mode);
 int stat(const char *path, struct stat *buf);
 
 #endif

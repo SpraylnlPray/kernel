@@ -4,8 +4,8 @@
 #include <stdint.h>
 
 struct interrupt_frame;
-typedef void*(*ISR80H_COMMMAND)(struct interrupt_frame* frame);
-typedef void(*INTERRUPT_CALLBACK_FUNCTION)();
+typedef void *(*ISR80H_COMMMAND)(struct interrupt_frame *frame);
+typedef void (*INTERRUPT_CALLBACK_FUNCTION)();
 
 struct idt_desc
 {
@@ -19,7 +19,7 @@ struct idt_desc
 struct idtr_desc
 {
     uint16_t limit; // Size of the descriptor table - 1
-    uint32_t base;  // Base address of the start of the interrupt descriptor table 
+    uint32_t base;  // Base address of the start of the interrupt descriptor table
 } __attribute__((packed));
 
 struct interrupt_frame
@@ -44,6 +44,5 @@ void enable_interrupts();
 void disable_interrupts();
 void isr80h_register_command(int command_id, ISR80H_COMMMAND command);
 int idt_register_interrupt_callback(int interrupt, INTERRUPT_CALLBACK_FUNCTION interrupt_callback);
-
 
 #endif

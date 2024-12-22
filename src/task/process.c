@@ -9,21 +9,21 @@
 #include "loader/formats/elfloader.h"
 
 // Currently running process
-struct process* current_process = 0;
+struct process *current_process = 0;
 
-static struct process* processes[DANOS_MAX_PROCESSES] = {};
+static struct process *processes[DANOS_MAX_PROCESSES] = {};
 
-static void process_init(struct process* process)
+static void process_init(struct process *process)
 {
     memset(process, 0, sizeof(struct process));
 }
 
-struct process* process_current()
+struct process *process_current()
 {
     return current_process;
 }
 
-struct process* process_get(int process_id)
+struct process *process_get(int process_id)
 {
     if (process_id < 0 || process_id >= DANOS_MAX_PROCESSES)
         return NULL;
@@ -31,7 +31,7 @@ struct process* process_get(int process_id)
     return processes[process_id];
 }
 
-int process_switch(struct process* process)
+int process_switch(struct process *process)
 {
     // save process state? not necessary right now because they share everything
     // try separate video memory?
@@ -39,7 +39,7 @@ int process_switch(struct process* process)
     return 0;
 }
 
-static int process_find_free_allocation_index(struct process* process)
+static int process_find_free_allocation_index(struct process *process)
 {
     int res = -DANOS_ENOMEM;
 
@@ -55,9 +55,9 @@ static int process_find_free_allocation_index(struct process* process)
     return res;
 }
 
-void* process_malloc(struct process* process, size_t size)
+void *process_malloc(struct process *process, size_t size)
 {
-    void* ptr = kzalloc(size);
+    void *ptr = kzalloc(size);
     if (!ptr)
     {
         goto out_err;
@@ -87,7 +87,7 @@ out_err:
     return 0;
 }
 
-static bool process_is_process_pointer(struct process* process, void* ptr)
+static bool process_is_process_pointer(struct process *process, void *ptr)
 {
     for (int i = 0; i < DANOS_MAX_PROGRAMM_ALLOCATIONS; i++)
     {
@@ -100,7 +100,7 @@ static bool process_is_process_pointer(struct process* process, void* ptr)
     return false;
 }
 
-static void process_allocation_unjoin(struct process* process, void* ptr)
+static void process_allocation_unjoin(struct process *process, void *ptr)
 {
     for (int i = 0; i < DANOS_MAX_PROGRAMM_ALLOCATIONS; i++)
     {
@@ -112,7 +112,7 @@ static void process_allocation_unjoin(struct process* process, void* ptr)
     }
 }
 
-static struct process_allocation* process_get_allocation_by_addr(void* addr, struct process* process)
+static struct process_allocation *process_get_allocation_by_addr(void *addr, struct process *process)
 {
     for (int i = 0; i < DANOS_MAX_PROGRAMM_ALLOCATIONS; i++)
     {
@@ -123,10 +123,10 @@ static struct process_allocation* process_get_allocation_by_addr(void* addr, str
     return 0;
 }
 
-void process_free(struct process* process, void* ptr)
+void process_free(struct process *process, void *ptr)
 {
     // unlink the pagres from the process for the give address
-    struct process_allocation* allocation = process_get_allocation_by_addr(ptr, process);
+    struct process_allocation *allocation = process_get_allocation_by_addr(ptr, process);
     if (!allocation)
     {
         // Oops its not our pointer
@@ -143,10 +143,10 @@ void process_free(struct process* process, void* ptr)
     kfree(ptr);
 }
 
-static int process_load_binary(const char* filename, struct process* process)
+static int process_load_binary(const char *filename, struct process *process)
 {
     int res = 0;
-    void* program_data_ptr = 0x00;
+    void *program_data_ptr = 0x00;
     int fd = fopen(filename, "r");
     if (!fd)
     {
@@ -190,11 +190,11 @@ out:
     return res;
 }
 
-static int process_load_elf(const char* filename, struct process* process)
+static int process_load_elf(const char *filename, struct process *process)
 {
     int res = 0;
 
-    struct elf_file* elf_file = 0;
+    struct elf_file *elf_file = 0;
     res = elf_load(filename, &elf_file);
     if (ISERR(res))
     {
@@ -208,7 +208,7 @@ out:
     return res;
 }
 
-static int process_load_data(const char* filename, struct process* process)
+static int process_load_data(const char *filename, struct process *process)
 {
     int res = 0;
     res = process_load_elf(filename, process);
@@ -219,34 +219,34 @@ static int process_load_data(const char* filename, struct process* process)
     return res;
 }
 
-int process_map_binary(struct process* process)
+int process_map_binary(struct process *process)
 {
     int res = 0;
 
     // We're giving the user programm access to the memory area that we allocated in process_load_for_slot using kzalloc, using 0x400000
-    paging_map_to(process->task->page_directory, (void*) DANOS_PROGRAM_VIRTUAL_ADDRESS, process->ptr, paging_align_address(process->ptr + process->size), PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL | PAGING_IS_WRITEABLE);
+    paging_map_to(process->task->page_directory, (void *)DANOS_PROGRAM_VIRTUAL_ADDRESS, process->ptr, paging_align_address(process->ptr + process->size), PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL | PAGING_IS_WRITEABLE);
 
     return res;
 }
 
-static int process_map_elf(struct process* process)
+static int process_map_elf(struct process *process)
 {
     int res = 0;
 
-    struct elf_file* elf_file = process->elf_file;
-    struct elf_header* header = elf_header(elf_file);
-    struct elf32_phdr* phdrs = elf_pheader(header);
+    struct elf_file *elf_file = process->elf_file;
+    struct elf_header *header = elf_header(elf_file);
+    struct elf32_phdr *phdrs = elf_pheader(header);
     for (int i = 0; i < header->e_phnum; i++)
     {
-        struct elf32_phdr* phdr = &phdrs[i];
-        void* phdr_phys_address = elf_phdr_phys_address(elf_file, phdr);
+        struct elf32_phdr *phdr = &phdrs[i];
+        void *phdr_phys_address = elf_phdr_phys_address(elf_file, phdr);
         int flags = PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL;
         if (phdr->p_flags & PF_W)
         {
             flags |= PAGING_IS_WRITEABLE;
         }
 
-        res = paging_map_to(process->task->page_directory, paging_align_to_lower_page((void*)phdr->p_vaddr), paging_align_to_lower_page(phdr_phys_address), paging_align_address(phdr_phys_address + phdr->p_memsz), flags);
+        res = paging_map_to(process->task->page_directory, paging_align_to_lower_page((void *)phdr->p_vaddr), paging_align_to_lower_page(phdr_phys_address), paging_align_address(phdr_phys_address + phdr->p_memsz), flags);
 
         if (ISERR(res))
         {
@@ -257,7 +257,7 @@ static int process_map_elf(struct process* process)
     return res;
 }
 
-int process_map_memory(struct process* process)
+int process_map_memory(struct process *process)
 {
     int res = 0;
 
@@ -278,7 +278,7 @@ int process_map_memory(struct process* process)
         goto out;
     }
 
-    paging_map_to(process->task->page_directory, (void*) DANOS_PROGRAMM_VIRTUAL_STACK_ADDRESS_END, process->stack, paging_align_address(process->stack + DANOS_USER_PROGRAM_STACK_SIZE), PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL | PAGING_IS_WRITEABLE);
+    paging_map_to(process->task->page_directory, (void *)DANOS_PROGRAMM_VIRTUAL_STACK_ADDRESS_END, process->stack, paging_align_address(process->stack + DANOS_USER_PROGRAM_STACK_SIZE), PAGING_IS_PRESENT | PAGING_ACCESS_FROM_ALL | PAGING_IS_WRITEABLE);
 out:
     return res;
 }
@@ -296,7 +296,7 @@ int process_get_free_slot()
     return -DANOS_EISTKN;
 }
 
-int process_load(const char* filename, struct process** process)
+int process_load(const char *filename, struct process **process)
 {
     int res = 0;
 
@@ -313,7 +313,7 @@ out:
     return res;
 }
 
-int process_load_switch(const char* filename, struct process** process)
+int process_load_switch(const char *filename, struct process **process)
 {
     int res = process_load(filename, process);
     if (res == 0)
@@ -324,12 +324,12 @@ int process_load_switch(const char* filename, struct process** process)
     return res;
 }
 
-int process_load_for_slot(const char* filename, struct process** process, int process_slot)
+int process_load_for_slot(const char *filename, struct process **process, int process_slot)
 {
     int res = 0;
-    struct task* task = 0;
-    struct process* _process;
-    void* programm_stack_ptr = 0;
+    struct task *task = 0;
+    struct process *_process;
+    void *programm_stack_ptr = 0;
 
     if (process_get(process_slot) != 0)
     {
@@ -381,7 +381,7 @@ int process_load_for_slot(const char* filename, struct process** process, int pr
     *process = _process;
 
     // Add process to the array
-    processes[process_slot] = _process;    
+    processes[process_slot] = _process;
 
 out:
     if (ISERR(res))
@@ -396,15 +396,15 @@ out:
     return res;
 }
 
-void process_get_arguments(struct process* process, int* argc, char*** argv)
+void process_get_arguments(struct process *process, int *argc, char ***argv)
 {
     *argc = process->arguments.argc;
     *argv = process->arguments.argv;
 }
 
-int process_count_command_arguments(struct command_argument* root_argument)
+int process_count_command_arguments(struct command_argument *root_argument)
 {
-    struct command_argument* current = root_argument;
+    struct command_argument *current = root_argument;
     int i = 0;
     while (current)
     {
@@ -415,10 +415,10 @@ int process_count_command_arguments(struct command_argument* root_argument)
     return i;
 }
 
-int process_inject_arguments(struct process* process, struct command_argument* root_argument)
+int process_inject_arguments(struct process *process, struct command_argument *root_argument)
 {
     int res = 0;
-    struct command_argument* current = root_argument;
+    struct command_argument *current = root_argument;
     int i = 0;
     int argc = process_count_command_arguments(root_argument);
 
@@ -428,7 +428,7 @@ int process_inject_arguments(struct process* process, struct command_argument* r
         goto out;
     }
 
-    char **argv = process_malloc(process, sizeof(const char*) * argc);
+    char **argv = process_malloc(process, sizeof(const char *) * argc);
     if (!argv)
     {
         res = -DANOS_ENOMEM;
@@ -437,7 +437,7 @@ int process_inject_arguments(struct process* process, struct command_argument* r
 
     while (current)
     {
-        char* argument_str = process_malloc(process, sizeof(current->argument));
+        char *argument_str = process_malloc(process, sizeof(current->argument));
         if (!argument_str)
         {
             res = -DANOS_ENOMEM;
@@ -457,7 +457,7 @@ out:
     return res;
 }
 
-static int process_terminate_allocations(struct process* process)
+static int process_terminate_allocations(struct process *process)
 {
     for (int i = 0; i < DANOS_MAX_PROGRAMM_ALLOCATIONS; i++)
     {
@@ -467,7 +467,7 @@ static int process_terminate_allocations(struct process* process)
     return 0;
 }
 
-int process_free_program_data(struct process* process)
+int process_free_program_data(struct process *process)
 {
     int res = 0;
     switch (process->filetype)
@@ -500,7 +500,7 @@ void process_switch_to_any()
     panic("No processes to switch to!\n");
 }
 
-static void process_unlink(struct process* process)
+static void process_unlink(struct process *process)
 {
     processes[process->id] = 0x00;
     if (current_process == process)
@@ -509,7 +509,7 @@ static void process_unlink(struct process* process)
     }
 }
 
-int process_terminate(struct process* process)
+int process_terminate(struct process *process)
 {
     int res = 0;
 
@@ -526,7 +526,7 @@ int process_terminate(struct process* process)
         print("Error freeing program data\n");
         goto out;
     }
-    
+
     kfree(process->stack);
     task_free(process->task);
     process_unlink(process);

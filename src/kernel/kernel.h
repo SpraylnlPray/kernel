@@ -4,7 +4,7 @@
 #define VGA_WIDTH 80
 #define VGA_HEIGHT 20
 
-#define ERROR(x) (void*)(x)
+#define ERROR(x) (void *)(x)
 #define ERROR_I(x) (int)(x)
 #define ISERR(x) ((int)(x) < 0)
 
@@ -12,7 +12,7 @@ void kernel_main();
 void kernel_page();
 void kernel_registers();
 void print(const char *str);
-void panic(const char* msg);
+void panic(const char *msg);
 void terminal_writechar(char c, char color);
 int get_debug_active();
 void set_debug_active(int active);

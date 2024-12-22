@@ -10,7 +10,7 @@ void print_usage()
     return;
 }
 
-bool list_file(char* path)
+bool list_file(char *path)
 {
     printf("list_file\n");
     int fd = fopen(path, "r");
@@ -18,16 +18,16 @@ bool list_file(char* path)
     return fd > 0;
 }
 
-bool list_directory(char* path)
+bool list_directory(char *path)
 {
     printf("list_directory\n");
     return 0;
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     print_usage();
-    
+
     struct stat buf;
     int res = stat(argv[1], &buf);
     if (res != 0)

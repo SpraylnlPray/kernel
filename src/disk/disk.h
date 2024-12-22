@@ -15,14 +15,14 @@ struct disk
 
     int id;
 
-    struct filesystem* filesystem;
+    struct filesystem *filesystem;
 
     // Private data of our filesystem
-    void* fs_private;
+    void *fs_private;
 };
 
 void disk_search_and_init();
-struct disk* disk_get(int index);
-int disk_read_block(struct disk *idisk, unsigned int lba, int total, void* buf);
+struct disk *disk_get(int index);
+int disk_read_block(struct disk *idisk, unsigned int lba, int total, void *buf);
 
 #endif

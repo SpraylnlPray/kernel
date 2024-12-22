@@ -3,7 +3,7 @@
 int strlen(const char *ptr)
 {
     int i = 0;
-    while(*ptr != 0)
+    while (*ptr != 0)
     {
         i++;
         ptr += 1;
@@ -25,7 +25,7 @@ int tonumericdigit(char c)
 int strnlen(const char *ptr, int max)
 {
     int i = 0;
-    for(i = 0; i < max; i++)
+    for (i = 0; i < max; i++)
     {
         if (ptr[i] == 0)
             break;
@@ -34,10 +34,10 @@ int strnlen(const char *ptr, int max)
     return i;
 }
 
-char* strcpy(char* dest, const char* src)
+char *strcpy(char *dest, const char *src)
 {
-    char* res = dest;
-    
+    char *res = dest;
+
     while (*src != 0)
     {
         *dest = *src;
@@ -50,7 +50,7 @@ char* strcpy(char* dest, const char* src)
     return res;
 }
 
-char* strncpy(char* dest, const char* src, int count)
+char *strncpy(char *dest, const char *src, int count)
 {
     int i = 0;
     for (i = 0; i < count - 1; i++)
@@ -65,7 +65,7 @@ char* strncpy(char* dest, const char* src, int count)
     return dest;
 }
 
-int strncmp(const char* str1, const char* str2, int n)
+int strncmp(const char *str1, const char *str2, int n)
 {
     unsigned char u1, u2;
     while (n-- > 0)
@@ -81,7 +81,7 @@ int strncmp(const char* str1, const char* str2, int n)
     return 0;
 }
 
-int strnlen_terminator(const char* str, int max, char terminator)
+int strnlen_terminator(const char *str, int max, char terminator)
 {
     int i = 0;
     for (i = 0; i < max; i++)
@@ -103,7 +103,7 @@ char tolower(char s1)
     return s1;
 }
 
-int istrncmp(const char* s1, const char* s2, int n)
+int istrncmp(const char *s1, const char *s2, int n)
 {
     unsigned char u1, u2;
     while (n-- > 0)
@@ -112,7 +112,7 @@ int istrncmp(const char* s1, const char* s2, int n)
         u2 = (unsigned char)*s2++;
         if (u1 != u2 && tolower(u1) != tolower(u2))
             return u1 - u2;
-        
+
         if (u1 == '\0')
             return 0;
     }
@@ -120,8 +120,8 @@ int istrncmp(const char* s1, const char* s2, int n)
     return 0;
 }
 
-char* sp = 0;
-char* strtok(char* str, const char* delimiters)
+char *sp = 0;
+char *strtok(char *str, const char *delimiters)
 {
     int i = 0;
     int len = strlen(delimiters);
@@ -133,10 +133,10 @@ char* strtok(char* str, const char* delimiters)
         sp = str;
     }
 
-    char* p_start = sp;
-    while(1)
+    char *p_start = sp;
+    while (1)
     {
-        for ( i = 0; i < len; i++)
+        for (i = 0; i < len; i++)
         {
             if (*p_start == delimiters[i])
             {

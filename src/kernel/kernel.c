@@ -21,9 +21,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#define DEBUG_TERMINAL \
-    uint16_t* local_row __attribute__((unused)) = &terminal_row; \
-    uint16_t* local_col __attribute__((unused)) = &terminal_col;
+#define DEBUG_TERMINAL                                           \
+    uint16_t *local_row __attribute__((unused)) = &terminal_row; \
+    uint16_t *local_col __attribute__((unused)) = &terminal_col;
 
 uint16_t *video_mem = 0;
 uint16_t terminal_row = 0;
@@ -60,7 +60,7 @@ void terminal_backspace()
 
     terminal_col -= 1;
     terminal_writechar(' ', 15);
-    if(!terminal_col)
+    if (!terminal_col)
     {
         terminal_row -= 1;
         terminal_col = VGA_WIDTH;
@@ -115,7 +115,7 @@ void terminal_writechar(char c, char color)
 
 void terminal_init()
 {
-    video_mem = (uint16_t*)(0xB8000);
+    video_mem = (uint16_t *)(0xB8000);
     for (int y = 0; y < VGA_HEIGHT; y++)
     {
         for (int x = 0; x < VGA_WIDTH; x++)
@@ -136,10 +136,12 @@ void print(const char *str)
 
 static struct paging_4gb_chunk *kernel_chunk = 0;
 
-void panic(const char* msg)
+void panic(const char *msg)
 {
     print(msg);
-    while(1) {}
+    while (1)
+    {
+    }
 }
 
 void kernel_page()
@@ -163,12 +165,12 @@ struct tss tss;
 
 struct gdt gdt_real[DANOS_TOTAL_GDT_SEGMENTS];
 struct gdt_structured gdt_structured[DANOS_TOTAL_GDT_SEGMENTS] = {
-    {.base = 0x00, .limit = 0x00, .type = 0x00 },             // NULL Segment
-    {.base = 0x00, .limit = 0xffffffff, .type = 0x9a },       // Kernel code segment
-    {.base = 0x00, .limit = 0xffffffff, .type = 0x92 },       // Kernel data segment
-    {.base = 0x00, .limit = 0xffffffff, .type = 0xf8 },       // User code segment
-    {.base = 0x00, .limit = 0xffffffff, .type = 0xf2 },       // User data segment
-    {.base = (uint32_t)&tss, .limit = sizeof(tss), .type = 0xe9 }, // TSS Segment
+    {.base = 0x00, .limit = 0x00, .type = 0x00},                  // NULL Segment
+    {.base = 0x00, .limit = 0xffffffff, .type = 0x9a},            // Kernel code segment
+    {.base = 0x00, .limit = 0xffffffff, .type = 0x92},            // Kernel data segment
+    {.base = 0x00, .limit = 0xffffffff, .type = 0xf8},            // User code segment
+    {.base = 0x00, .limit = 0xffffffff, .type = 0xf2},            // User data segment
+    {.base = (uint32_t)&tss, .limit = sizeof(tss), .type = 0xe9}, // TSS Segment
 };
 
 void kernel_main()
@@ -215,7 +217,7 @@ void kernel_main()
     // Initialized all the system keyboards
     keyboard_init();
 
-    struct process* process = 0;
+    struct process *process = 0;
     int res = process_load_switch("0:/shell.elf", &process);
     if (res != DANOS_ALL_OK)
     {
@@ -224,5 +226,7 @@ void kernel_main()
 
     task_run_first_ever_task();
 
-    while(1) {}
+    while (1)
+    {
+    }
 }

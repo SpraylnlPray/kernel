@@ -8,7 +8,7 @@
 #include "status.h"
 #include "task/process.h"
 
-extern void* interrupt_pointer_table[DANOS_TOTAL_INTERRUPTS];
+extern void *interrupt_pointer_table[DANOS_TOTAL_INTERRUPTS];
 
 struct idt_desc idt_descriptors[DANOS_TOTAL_INTERRUPTS];
 struct idtr_desc idtr_descriptor;
@@ -25,7 +25,7 @@ void no_interrupt_handler()
     outb(0x20, 0x20);
 }
 
-void interrupt_handler(int interrupt, struct interrupt_frame* frame)
+void interrupt_handler(int interrupt, struct interrupt_frame *frame)
 {
     if (interrupt_callbacks[interrupt] != 0)
     {
@@ -46,11 +46,11 @@ void idt_zero()
 void idt_set(int interrupt_no, void *address)
 {
     struct idt_desc *desc = &idt_descriptors[interrupt_no];
-    desc->offset_1 = (int32_t) address & 0x0000ffff;
+    desc->offset_1 = (int32_t)address & 0x0000ffff;
     desc->selector = KERNEL_CODE_SELECTOR;
     desc->zero = 0x00;
     desc->type_attr = 0xee;
-    desc->offset_2 = (uint32_t) address >> 16;
+    desc->offset_2 = (uint32_t)address >> 16;
 }
 
 void idt_handle_exception()
@@ -62,14 +62,14 @@ void idt_handle_exception()
 void idt_clock()
 {
     outb(0x20, 0x20); // Acknowledgement for interrupt controller
-    task_next(); // Switch to the next task
+    task_next();      // Switch to the next task
 }
 
 void idt_init()
 {
     memset(idt_descriptors, 0, sizeof(idt_descriptors));
     idtr_descriptor.limit = sizeof(idt_descriptors) - 1;
-    idtr_descriptor.base = (uint32_t) idt_descriptors;
+    idtr_descriptor.base = (uint32_t)idt_descriptors;
 
     for (int i = 0; i < DANOS_TOTAL_INTERRUPTS; i++)
     {
@@ -121,9 +121,9 @@ void isr80h_register_command(int command_id, ISR80H_COMMMAND command)
     isr80h_commands[command_id] = command;
 }
 
-void* isr80h_handle_command(int command, struct interrupt_frame *frame)
+void *isr80h_handle_command(int command, struct interrupt_frame *frame)
 {
-    void* result = 0;
+    void *result = 0;
 
     if (command < 0 || command >= DANOS_MAX_ISR80H_COMMANDS)
     {

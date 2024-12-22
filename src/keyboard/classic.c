@@ -15,7 +15,7 @@ static struct keyboard_layout us_layout = {
         0x08, '\t', 'q', 'w', 'e', 'r', 't',
         'y', 'u', 'i', 'o', 'p', '[', ']',
         0x0d, 0x00, 'a', 's', 'd', 'f', 'g',
-        'h', 'j', 'k', 'l', ';', '\'', '`', 
+        'h', 'j', 'k', 'l', ';', '\'', '`',
         0x00, '\\', 'z', 'x', 'c', 'v', 'b',
         'n', 'm', ',', '.', '/', 0x00, '*',
         0x00, 0x20, 0x00, 0x00, 0x00, 0x00,
@@ -53,23 +53,11 @@ static struct keyboard_layout de_layout = {
         0x00, 0x20, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, '7', '8', '9', '-', '4', '5',
-        '6', '+', '1', '2', '3', '0', '.'
-    },
-    .scan_set_shift = {
-        0x00, 0x1B, '!', '"', 'S', '$', '%', // TODO: S should be §
-        '&', '/', '(', ')', '=', '?', '`',
-        0x08, '\t', 'Q', 'W', 'E', 'R', 'T',
-        'Y', 'U', 'I', 'O', 'P', 'U', '*', // TODO: U should be Ü
-        0x0d, 0x00, 'A', 'S', 'D', 'F', 'G',
-        'H', 'J', 'K', 'L', 'O', 'A', '^',  // TODO: O should be Ö, A should be Ä, ^ should be °
-        0x00, '\'', 'Z', 'X', 'C', 'V', 'B',
-        'N', 'M', ';', ':', '_', 0x00, '*',
-        0x00, 0x20, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, '7', '8', '9', '-', '4', '5',
-        '6', '+', '1', '2', '3', '0', '.'
-    }
-};
+        '6', '+', '1', '2', '3', '0', '.'},
+    .scan_set_shift = {0x00, 0x1B, '!', '"', 'S', '$', '%',                                                                       // TODO: S should be §
+                       '&', '/', '(', ')', '=', '?', '`', 0x08, '\t', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'U', '*', // TODO: U should be Ü
+                       0x0d, 0x00, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'O', 'A', '^',                                    // TODO: O should be Ö, A should be Ä, ^ should be °
+                       0x00, '\'', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ';', ':', '_', 0x00, '*', 0x00, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, '7', '8', '9', '-', '4', '5', '6', '+', '1', '2', '3', '0', '.'}};
 
 int classic_keyboard_init();
 void classic_keyboard_handle_interrupt();
@@ -92,7 +80,7 @@ int classic_keyboard_init()
     return 0;
 }
 
-uint8_t classic_keyboard_scancode_to_char(struct keyboard_layout* layout, uint8_t scancode)
+uint8_t classic_keyboard_scancode_to_char(struct keyboard_layout *layout, uint8_t scancode)
 {
     size_t size_of_keyboard_set_one = sizeof(layout->scan_set_default) / sizeof(uint8_t);
     if (scancode > size_of_keyboard_set_one)
@@ -147,7 +135,7 @@ void classic_keyboard_handle_interrupt()
     task_page();
 }
 
-struct keyboard* classic_init()
+struct keyboard *classic_init()
 {
     return &classic_keyboard;
 }
