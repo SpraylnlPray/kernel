@@ -60,8 +60,6 @@ int atoi(char *c)
     return res;
 }
 
-
-
 void *malloc(size_t size)
 {
     return danos_malloc(size);

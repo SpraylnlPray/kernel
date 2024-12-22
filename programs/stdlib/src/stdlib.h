@@ -6,7 +6,7 @@
 
 #define ASCII_ZERO 48
 #define ASCII_NINE 57
-#define ASCII_SPACE 20
+#define ASCII_SPACE 32
 
 void *malloc(size_t size);
 void free(void *ptr);
