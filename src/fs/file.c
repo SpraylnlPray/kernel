@@ -128,6 +128,12 @@ FILE_MODE file_get_mode_by_string(const char* str)
 int opendir(const char* dirname)
 {
     int res = 0;
+    if (dirname == NULL)
+    {
+        res = -DANOS_EINVARG;
+        goto out;
+    }
+
     struct path_root* root_path = pathparser_parse(dirname, NULL);
     if (!root_path)
     {
@@ -175,7 +181,7 @@ int opendir(const char* dirname)
     res = desc->index;
 
 out:
-    // fopen should return 0 if it fails
+    // opendir should return 0 if it fails
     if (res < 0)
         res = 0;
     return res;
@@ -184,6 +190,13 @@ out:
 int fopen(const char* filename, const char* mode_str)
 {
     int res = 0;
+
+    if (filename == NULL || mode_str == NULL)
+    {
+        res = -DANOS_EINVARG;
+        goto out;
+    }
+
     struct path_root* root_path = pathparser_parse(filename, NULL);
     if (!root_path)
     {
@@ -300,6 +313,12 @@ struct dirent* readdir(int fd)
 int fstat(int fd, struct file_stat* stat)
 {
     int res = 0;
+    if (stat == NULL)
+    {
+        res = -DANOS_EINVARG;
+        goto out;
+    }
+
     struct file_descriptor* desc = file_get_descriptor(fd);
     if (!desc)
     {
@@ -316,6 +335,12 @@ out:
 int stat(const char* path, struct stat *buf)
 {
     int res = 0;
+    if (path == NULL || buf == NULL)
+    {
+        res = -DANOS_EINVARG;
+        goto out;
+    }
+
     struct path_root* root_path = pathparser_parse(path, NULL);
     if (!root_path)
     {
