@@ -1,9 +1,9 @@
 #ifndef DANOS_H
 #define DANOS_H
 
-// #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include "file.h"
 
 struct command_argument
 {
@@ -35,5 +35,6 @@ int danos_get_keyboard_layout_count();
 void* danos_get_active_keyboard_layout_id(char* buf, int size);
 int danos_set_active_keyboard_layout(char* id);
 int danos_fopen(const char* path, const char* mode);
+int danos_stat(const char* path, struct stat *buf);
 
 #endif

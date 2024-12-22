@@ -27,11 +27,20 @@ bool list_directory(char* path)
 int main(int argc, char** argv)
 {
     print_usage();
-    char* path = argv[1];
     
-    bool success = list_file(path);
-    if (success)
-        return 0;
-    
-    return list_directory(path);
+    struct stat buf;
+    int res = stat(argv[1], &buf);
+    if (res != 0)
+        return -1;
+
+    if (buf.type == FILE_TYPE_DIRECTORY)
+    {
+        list_directory(argv[1]);
+    }
+    if (buf.type == FILE_TYPE_FILE)
+    {
+        list_file(argv[1]);
+    }
+
+    return 0;
 }

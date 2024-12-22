@@ -307,7 +307,44 @@ int fstat(int fd, struct file_stat* stat)
         goto out;
     }
 
-    res = desc->filesystem->stat(desc->disk, desc->private_data, stat);
+    res = desc->filesystem->fstat(desc->disk, desc->private_data, stat);
+
+out:
+    return res;
+}
+
+int stat(const char* path, struct stat *buf)
+{
+    int res = 0;
+    struct path_root* root_path = pathparser_parse(path, NULL);
+    if (!root_path)
+    {
+        res = -DANOS_EINVARG;
+        goto out;
+    }
+
+    // We cannot have just a root path 0:/ 0:/test.txt
+    if (!root_path->first)
+    {
+        res = -DANOS_EINVARG;
+        goto out;
+    }
+
+    // Ensure the disk we are reading from exists
+    struct disk* disk = disk_get(root_path->drive_no);
+    if (!disk)
+    {
+        res = -DANOS_EIO;
+        goto out;
+    }
+
+    if (!disk->filesystem)
+    {
+        res = -DANOS_EIO;
+        goto out;
+    }
+
+    res = disk->filesystem->stat(disk, root_path->first, buf);
 
 out:
     return res;

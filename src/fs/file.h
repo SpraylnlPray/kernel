@@ -1,8 +1,8 @@
 #ifndef FILE_H
 #define FILE_H
 
-#include "pparser.h"
 #include <stdint.h>
+#include "pparser.h"
 
 typedef unsigned int FILE_SEEK_MODE;
 enum
@@ -28,18 +28,23 @@ enum
 
 typedef unsigned int FILE_STAT_FLAGS;
 
-typedef unsigned int FILE_STAT_TYPE;
+typedef unsigned int STAT_TYPE;
 enum
 {
     FILE_TYPE_FILE,
     FILE_TYPE_DIRECTORY,
 };
 
+struct stat
+{
+    uint32_t size;
+    STAT_TYPE type;
+};
+
 struct file_stat
 {
     FILE_STAT_FLAGS flags;
-    uint32_t size;
-    FILE_STAT_TYPE type;
+    uint32_t filesize;
 };
 
 struct disk;
@@ -47,11 +52,12 @@ typedef void* (*FS_OPEN_FUNCTION)(struct disk* disk, struct path_part* path, FIL
 typedef int (*FS_RESOLVE_FUNCTION)(struct disk* disk);
 typedef int (*FS_READ_FUNCTION)(struct disk* disk, void* private, uint32_t size, uint32_t nmemb, char* out);
 typedef int (*FS_SEEK_FUNCTION)(void* private, uint32_t offset, FILE_SEEK_MODE seek_mode);
-typedef int (*FS_STAT_FUNCTION)(struct disk* disk, void* private, struct file_stat* stat);
+typedef int (*FS_FSTAT_FUNCTION)(struct disk* disk, void* private, struct file_stat* stat);
 typedef int (*FS_CLOSE_FUNCTION)(void* private);
 typedef void* (*FS_OPEN_DIR_FUNCTION)(struct disk* disk, struct path_part* path);
 typedef struct dirent* (*FS_READ_DIR_FUNCTION)(struct disk* disk, void* private);
 typedef int (*FS_CLOSE_DIR_FUNCTION)(void* private);
+typedef int (*FS_STAT_FUNCTION)(struct disk* disk, struct path_part* path, struct stat* buf);
 
 struct filesystem
 {
@@ -60,11 +66,12 @@ struct filesystem
     FS_OPEN_FUNCTION open;
     FS_READ_FUNCTION read;
     FS_SEEK_FUNCTION seek;
-    FS_STAT_FUNCTION stat;
+    FS_FSTAT_FUNCTION fstat;
     FS_CLOSE_FUNCTION close;
     FS_OPEN_DIR_FUNCTION opendir;
     FS_READ_DIR_FUNCTION readdir;
     FS_CLOSE_DIR_FUNCTION closedir;
+    FS_STAT_FUNCTION stat;
 
     char name[20];
 };
@@ -93,6 +100,7 @@ int fclose(int fd);
 int opendir(const char* dirname);
 struct dirent* readdir(int fd);
 int closedir(int fd);
+int stat(const char* path, struct stat *buf);
 
 typedef unsigned int D_TYPE;
 enum

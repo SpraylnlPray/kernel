@@ -129,11 +129,12 @@ int fat16_resolve(struct disk* disk);
 void* fat16_open(struct disk* disk, struct path_part* path, FILE_MODE mode);
 int fat16_read(struct disk* disk, void* descriptor, uint32_t size, uint32_t nmemb, char* out);
 int fat16_seek(void* private, uint32_t offset, FILE_SEEK_MODE seek_mode);
-int fat16_stat(struct disk* disk, void* private, struct file_stat* stat);
+int fat16_fstat(struct disk* disk, void* private, struct file_stat* stat);
 int fat16_close(void* private);
 void* fat16_opendir(struct disk* disk, struct path_part* path);
 struct dirent* fat16_readdir(struct disk* disk, void* private);
 int fat16_closedir(void* private);
+int fat16_stat(struct disk* disk, struct path_part* path, struct stat* buf);
 
 struct filesystem fat16_fs =
 {
@@ -141,11 +142,12 @@ struct filesystem fat16_fs =
     .open = fat16_open,
     .read = fat16_read,
     .seek = fat16_seek,
-    .stat = fat16_stat,
+    .fstat = fat16_fstat,
     .close = fat16_close,
     .opendir = fat16_opendir,
     .readdir = fat16_readdir,
     .closedir = fat16_closedir,
+    .stat = fat16_stat,
 };
 
 struct filesystem* fat16_init()
@@ -687,6 +689,9 @@ void* fat16_open(struct disk* disk, struct path_part* path, FILE_MODE mode)
     return descriptor;
 
 err_out:
+    if (descriptor->item)
+        fat16_fat_item_free(descriptor->item);
+
     if(descriptor)
         kfree(descriptor);
     
@@ -757,7 +762,7 @@ out:
     return res;
 }
 
-int fat16_stat(struct disk* disk, void* private, struct file_stat* stat)
+int fat16_fstat(struct disk* disk, void* private, struct file_stat* stat)
 {
     int res = 0;
 
@@ -765,21 +770,44 @@ int fat16_stat(struct disk* disk, void* private, struct file_stat* stat)
     struct fat_item* desc_item = desc->item;
     if (desc_item->type != FAT_ITEM_TYPE_FILE)
     {
-        struct fat_directory* item = desc_item->directory;
-        stat->size = item->total * sizeof(struct fat_directory_item);
-        stat->type = FILE_TYPE_DIRECTORY;
-        stat->flags = 0x00;
+        res = -DANOS_EINVARG;
         goto out;
     }
 
     struct fat_directory_item* ritem = desc_item->item;
-    stat->size = ritem->size;
+    stat->filesize = ritem->size;
     stat->flags = 0x00;
-    stat->type = FILE_TYPE_FILE;
 
     if (ritem->attribute & FAT_FILE_READ_ONLY)
     {
         stat->flags |= FILE_STAT_READ_ONLY;
+    }
+
+out:
+    return res;
+}
+
+int fat16_stat(struct disk* disk, struct path_part* path, struct stat* buf)
+{
+    int res = DANOS_ALL_OK;
+    struct fat_item *item = fat16_get_directory_entry(disk, path);
+    if (!item)
+    {
+        res = -DANOS_EIO;
+        goto out;
+    }
+
+    if (item->type == FAT_ITEM_TYPE_DIRECTORY)
+    {
+        print("fat16 Found directory!\n");
+        buf->type = FILE_TYPE_DIRECTORY;
+        buf->size = item->directory->item->size;
+    }
+    if (item->type == FAT_ITEM_TYPE_FILE)
+    {
+        print("fat16 Found file!\n");
+        buf->type = FILE_TYPE_FILE;
+        buf->size = item->item->size;
     }
 
 out:
