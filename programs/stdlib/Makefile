@@ -18,42 +18,42 @@ all: directories ${FILES}
 
 ./build/danos.o: ./src/danos.c
 	@echo "$@ start"
-	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/danos.c -o ./build/danos.o
+	i686-elf-gcc ${INCLUDES} -I ./ ${FLAGS} -std=gnu99 -c ./src/danos.c -o ./build/danos.o
 	@echo "$@ finished"
 
 ./build/stdlib.o: ./src/stdlib.c
 	@echo "$@ start"
-	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/stdlib.c -o ./build/stdlib.o
+	i686-elf-gcc ${INCLUDES} -I ./ ${FLAGS} -std=gnu99 -c ./src/stdlib.c -o ./build/stdlib.o
 	@echo "$@ finished"
 
 ./build/stdio.o: ./src/stdio.c
 	@echo "$@ start"
-	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/stdio.c -o ./build/stdio.o
+	i686-elf-gcc ${INCLUDES} -I ./ ${FLAGS} -std=gnu99 -c ./src/stdio.c -o ./build/stdio.o
 	@echo "$@ finished"
 
 ./build/string.o: ./src/string.c
 	@echo "$@ start"
-	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/string.c -o ./build/string.o
+	i686-elf-gcc ${INCLUDES} -I ./ ${FLAGS} -std=gnu99 -c ./src/string.c -o ./build/string.o
 	@echo "$@ finished"
 
 ./build/memory.o: ./src/memory.c
 	@echo "$@ start"
-	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/memory.c -o ./build/memory.o
+	i686-elf-gcc ${INCLUDES} -I ./ ${FLAGS} -std=gnu99 -c ./src/memory.c -o ./build/memory.o
 	@echo "$@ finished"
 
 ./build/start.o: ./src/start.c
 	@echo "$@ start"
-	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/start.c -o ./build/start.o
+	i686-elf-gcc ${INCLUDES} -I ./ ${FLAGS} -std=gnu99 -c ./src/start.c -o ./build/start.o
 	@echo "$@ finished"
 
 ./build/keyboard.o: ./src/keyboard.c
 	@echo "$@ start"
-	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/keyboard.c -o ./build/keyboard.o
+	i686-elf-gcc ${INCLUDES} -I ./ ${FLAGS} -std=gnu99 -c ./src/keyboard.c -o ./build/keyboard.o
 	@echo "$@ finished"
 
 ./build/file.o: ./src/file.c
 	@echo "$@ start"
-	i686-elf-gcc ${INCLUDES} -I ./${FLAGS} -std=gnu99 -c ./src/file.c -o ./build/file.o
+	i686-elf-gcc ${INCLUDES} -I ./ ${FLAGS} -std=gnu99 -c ./src/file.c -o ./build/file.o
 	@echo "$@ finished"
 
 clean:

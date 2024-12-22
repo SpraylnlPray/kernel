@@ -6,7 +6,7 @@
 
 void print_usage()
 {
-    printf("print_usage\n");
+    // printf("print_usage\n");
     return;
 }
 
@@ -21,6 +21,7 @@ bool list_file(char *path)
 bool list_directory(char *path)
 {
     int res = 0;
+    struct dirent *dirent = NULL;
     int fd = opendir(path);
     if (!fd)
     {
@@ -29,17 +30,17 @@ bool list_directory(char *path)
         goto out;
     }
 
-    struct dirent *dirent = readdir(fd);
+    dirent = readdir(fd);
     if (!dirent)
     {
         printf("Error reading directory %s", path);
         res = -1;
         goto out;
     }
-
+    
     while (dirent != NULL)
     {
-        printf("%s\n", dirent->d_name);
+        printf("%10s %i\n", dirent->d_name, 25);
         dirent = readdir(fd);
     }
 
@@ -78,5 +79,6 @@ int main(int argc, char **argv)
         return list_file(argv[1]);
     }
 
-    return 0;
+    printf("Unknown file type\n");
+    return -1;
 }

@@ -6,6 +6,8 @@
 int main(int argc, char **argv)
 {
     print("DanOS v1.0.0\n");
+    char *tmp = "ls.elf 0:/src";
+    danos_system_run(tmp);
     while (1)
     {
         print("> ");
