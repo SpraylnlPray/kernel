@@ -20,8 +20,41 @@ bool list_file(char *path)
 
 bool list_directory(char *path)
 {
-    printf("list_directory\n");
-    return 0;
+    int res = 0;
+    int fd = opendir(path);
+    if (!fd)
+    {
+        printf("Error opening directory: %s", path);
+        res = -1;
+        goto out;
+    }
+
+    struct dirent *dirent = readdir(fd);
+    if (!dirent)
+    {
+        printf("Error reading directory %s", path);
+        res = -1;
+        goto out;
+    }
+
+    while (dirent != NULL)
+    {
+        printf("%s\n", dirent->d_name);
+        dirent = readdir(fd);
+    }
+
+out:
+    if (fd)
+    {
+        closedir(fd);
+    }
+
+    if (dirent)
+    {
+        free(dirent);
+    }
+
+    return res;
 }
 
 int main(int argc, char **argv)
@@ -31,15 +64,18 @@ int main(int argc, char **argv)
     struct stat buf;
     int res = stat(argv[1], &buf);
     if (res != 0)
+    {
+        printf("No such file or directory: %s", argv[1]);
         return -1;
+    }
 
     if (buf.type == FILE_TYPE_DIRECTORY)
     {
-        list_directory(argv[1]);
+        return list_directory(argv[1]);
     }
     if (buf.type == FILE_TYPE_FILE)
     {
-        list_file(argv[1]);
+        return list_file(argv[1]);
     }
 
     return 0;

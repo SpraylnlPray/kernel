@@ -36,5 +36,8 @@ void *danos_get_active_keyboard_layout_id(char *buf, int size);
 int danos_set_active_keyboard_layout(char *id);
 int danos_fopen(const char *path, const char *mode);
 int danos_stat(const char *path, struct stat *buf);
+int danos_opendir(const char *path);
+struct dirent *danos_readdir(int fd);
+int danos_closedir(int fd);
 
 #endif

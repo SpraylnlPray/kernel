@@ -25,4 +25,7 @@ void isr80h_register_commands()
     isr80h_register_command(SYSTEM_COMMAND13_SET_ACTIVE_KEYBOARD_LAYOUT, isr80h_command13_set_active_keyboard_layout);
     isr80h_register_command(SYSTEM_COMMAND14_STAT, isr80h_command14_stat);
     isr80h_register_command(SYSTEM_COMMAND15_FOPEN, isr80h_command15_fopen);
+    isr80h_register_command(SYSTEM_COMMAND16_OPENDIR, isr80h_command16_opendir);
+    isr80h_register_command(SYSTEM_COMMAND17_READDIR, isr80h_command17_readdir);
+    isr80h_register_command(SYSTEM_COMMAND18_CLOSEDIR, isr80h_command18_closedir);
 }

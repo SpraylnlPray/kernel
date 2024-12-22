@@ -20,5 +20,29 @@ void *isr80h_command15_fopen(struct interrupt_frame *frame)
     void *user_space_path_buffer = task_get_stack_item(task_current(), 1);
     copy_string_from_task(task_current(), user_space_path_buffer, path_buffer, sizeof(path_buffer));
     copy_string_from_task(task_current(), user_space_mode_buffer, mode_buffer, sizeof(mode_buffer));
+
     return (void *)fopen(path_buffer, mode_buffer);
+}
+
+void *isr80h_command16_opendir(struct interrupt_frame *frame)
+{
+    char path_buffer[DANOS_MAX_PATH];
+    void *user_space_path_buffer = task_get_stack_item(task_current(), 0);
+    copy_string_from_task(task_current(), user_space_path_buffer, path_buffer, sizeof(path_buffer));
+
+    return (void *)opendir(path_buffer);
+}
+
+void *isr80h_command17_readdir(struct interrupt_frame *frame)
+{
+    int fd = (int)task_get_stack_item(task_current(), 0);
+
+    return (void *)readdir(fd);
+}
+
+void *isr80h_command18_closedir(struct interrupt_frame *frame)
+{
+    int fd = (int)task_get_stack_item(task_current(), 0);
+
+    return (void *)closedir(fd);
 }

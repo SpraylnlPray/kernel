@@ -17,6 +17,9 @@ global danos_get_active_keyboard_layout_id:function
 global danos_set_active_keyboard_layout:function
 global danos_stat:function
 global danos_fopen:function
+global danos_opendir:function
+global danos_readdir:function
+global danos_closedir:function
 
 ; void print(const char* message)
 print:
@@ -143,8 +146,8 @@ danos_get_keyboard_layouts:
     mov ebp, esp
 
     mov eax, 10 ; Command 10 get keyboard layouts
-    push dword[ebp + 8] ; Variable "size"
-    push dword[ebp + 12] ; Variable "buf"
+    push dword[ebp + 8] ; Variable "buf"
+    push dword[ebp + 12] ; Variable "size"
     int 0x80
 
     add esp, 8
@@ -169,8 +172,8 @@ danos_get_active_keyboard_layout_id:
     mov ebp, esp
 
     mov eax, 12 ; Command 12 get active layout id
-    push dword[ebp + 8] ; Variable "size"
-    push dword[ebp + 12] ; Variable "buf"
+    push dword[ebp + 8] ; Variable "buf"
+    push dword[ebp + 12] ; Variable "size"
     int 0x80
 
     add esp, 8
@@ -198,8 +201,8 @@ danos_stat:
     mov ebp, esp
 
     mov eax, 14 ; Command 14 stat
-    push dword[ebp + 8] ; Variable "buf"
-    push dword[ebp + 12] ; Variable "path"
+    push dword[ebp + 8] ; Variable "path"
+    push dword[ebp + 12] ; Variable "buf"
     int 0x80
 
     add esp, 8
@@ -213,11 +216,53 @@ danos_fopen:
     mov ebp, esp
 
     mov eax, 15 ; Command 15 fopen
-    push dword[ebp + 8] ; Variable "mode"
-    push dword[ebp + 12] ; Variable "path"
+    push dword[ebp + 8] ; Variable "path"
+    push dword[ebp + 12] ; Variable "mode"
     int 0x80
 
     add esp, 8
+
+    pop ebp
+    ret
+
+; return danos_opendir(path);
+danos_opendir:
+    push ebp
+    mov ebp, esp
+
+    mov eax, 16 ; Command opendir
+    push dword[ebp + 8] ; Variable "path"
+    int 0x80
+
+    add esp, 4
+
+    pop ebp
+    ret
+
+; return danos_readdir(fd);
+danos_readdir:
+    push ebp
+    mov ebp, esp
+
+    mov eax, 17 ; Command readdir
+    push dword[ebp + 8] ; Variable "fd"
+    int 0x80
+
+    add esp, 4
+
+    pop ebp
+    ret
+
+; return danos_closedir(fd);
+danos_closedir:
+    push ebp
+    mov ebp, esp
+
+    mov eax, 18 ; Command closedir
+    push dword[ebp + 8] ; Variable "fd"
+    int 0x80
+
+    add esp, 4
 
     pop ebp
     ret
