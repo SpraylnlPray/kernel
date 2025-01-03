@@ -103,6 +103,30 @@ char tolower(char s1)
     return s1;
 }
 
+char *str_tolower(char *dest, char *src, int size)
+{
+    int count = 0;
+    while (*src && count < size)
+    {
+        dest[count] = tolower(*src);
+        count++;
+        src++;
+    }
+
+    return dest;
+}
+
+char *path_concat(char *dest, char *first, char *second)
+{
+    strncpy(dest, first, strlen(first) + 1);
+    dest[strlen(first)] = '/';
+    char as_lower[1024] = {0};
+    str_tolower(as_lower, second, 1024);
+    strncpy(dest + strlen(first) + 1, as_lower, strlen(as_lower) + 1);
+
+    return dest;
+}
+
 int istrncmp(const char *s1, const char *s2, int n)
 {
     unsigned char u1, u2;

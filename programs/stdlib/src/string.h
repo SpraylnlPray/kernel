@@ -14,5 +14,7 @@ int istrncmp(const char *s1, const char *s2, int n);
 char tolower(char s1);
 char *strncpy(char *dest, const char *src, int count);
 char *strtok(char *str, const char *delimiters);
+char *str_tolower(char *dest, char *src, int size);
+char *path_concat(char *dest, char *first, char *second);
 
 #endif

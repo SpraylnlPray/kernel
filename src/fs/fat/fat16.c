@@ -111,6 +111,13 @@ struct fat_file_descriptor
     uint32_t pos;
 };
 
+struct fat_dirent_descriptor
+{
+    struct fat_item *item;
+    uint32_t pos;
+    struct dirent *prev;
+};
+
 struct fat_private
 {
     struct fat_h header;
@@ -799,13 +806,11 @@ int fat16_stat(struct disk *disk, struct path_part *path, struct stat *buf)
 
     if (item->type == FAT_ITEM_TYPE_DIRECTORY)
     {
-        print("fat16 Found directory!\n");
         buf->type = FILE_TYPE_DIRECTORY;
         buf->size = item->directory->item->size;
     }
     if (item->type == FAT_ITEM_TYPE_FILE)
     {
-        print("fat16 Found file!\n");
         buf->type = FILE_TYPE_FILE;
         buf->size = item->item->size;
     }
@@ -820,6 +825,19 @@ static void fat16_free_file_descriptor(struct fat_file_descriptor *desc)
     kfree(desc);
 }
 
+static void fat16_free_dirent_descriptor(struct fat_dirent_descriptor *desc)
+{
+    if (desc->prev)
+    {
+        kfree(desc->prev->d_name);
+        kfree(desc->prev);
+        desc->prev = NULL;
+    }
+
+    fat16_fat_item_free(desc->item);
+    kfree(desc);
+}
+
 int fat16_close(void *private)
 {
     fat16_free_file_descriptor((struct fat_file_descriptor *)private);
@@ -829,7 +847,7 @@ int fat16_close(void *private)
 void *fat16_opendir(struct disk *disk, struct path_part *path)
 {
     int err_code = 0;
-    struct fat_file_descriptor *descriptor = 0;
+    struct fat_dirent_descriptor *descriptor = 0;
 
     struct fat_item *item = fat16_get_directory_entry(disk, path);
     if (!item)
@@ -844,7 +862,7 @@ void *fat16_opendir(struct disk *disk, struct path_part *path)
         goto err_out;
     }
 
-    descriptor = kzalloc(sizeof(struct fat_file_descriptor));
+    descriptor = kzalloc(sizeof(struct fat_dirent_descriptor));
     if (!descriptor)
     {
         err_code = -DANOS_ENOMEM;
@@ -853,6 +871,7 @@ void *fat16_opendir(struct disk *disk, struct path_part *path)
 
     descriptor->item = item;
     descriptor->pos = 0;
+    descriptor->prev = 0;
 
     return descriptor;
 
@@ -863,7 +882,7 @@ err_out:
     return ERROR(err_code);
 }
 
-static struct fat_directory_item *fat16_get_non_long_fat_item(struct disk *disk, struct fat_directory *directory, struct fat_file_descriptor *descriptor)
+static struct fat_directory_item *fat16_get_non_long_fat_item(struct disk *disk, struct fat_directory *directory, struct fat_dirent_descriptor *descriptor)
 {
     // TODO: Handle multiple elements that are part of a long name, see page 31 of https://academy.cba.mit.edu/classes/networking_communications/SD/FAT.pdf
     struct fat_directory_item *dir_item = &directory->item[descriptor->pos];
@@ -879,20 +898,19 @@ static struct fat_directory_item *fat16_get_non_long_fat_item(struct disk *disk,
     return dir_item;
 }
 
-// This is not save for multithreading!!
-static struct dirent *prev_dirent = NULL; // TODO: Find better solution for this
 struct dirent *fat16_readdir(struct disk *disk, void *private)
 {
-    struct fat_file_descriptor *descriptor = private;
+    struct fat_dirent_descriptor *descriptor = private;
     struct fat_item *descriptor_item = descriptor->item;
     struct fat_directory *directory = 0;
     struct dirent *dirent = 0;
     struct fat_directory_item *cur_item = 0;
 
-    if (prev_dirent != NULL)
+    if (descriptor->prev != NULL)
     {
-        kfree(prev_dirent);
-        prev_dirent = NULL;
+        kfree(descriptor->prev->d_name);
+        kfree(descriptor->prev);
+        descriptor->prev = NULL;
     }
 
     if (descriptor_item->type != FAT_ITEM_TYPE_DIRECTORY)
@@ -925,7 +943,7 @@ struct dirent *fat16_readdir(struct disk *disk, void *private)
     fat16_get_full_relative_filename(cur_item, name, sizeof(name));
     dirent->d_name = kzalloc(sizeof(name));
     strncpy(dirent->d_name, name, sizeof(name)); // TODO: Test with names longer than 8 chars
-    dirent->d_namelen = sizeof(dirent->d_name);
+    dirent->d_namelen = strlen(dirent->d_name);
     descriptor->pos++;
 
     if (cur_item->attribute == FAT_FILE_SUBDIRECTORY)
@@ -940,29 +958,25 @@ struct dirent *fat16_readdir(struct disk *disk, void *private)
 err_out:
     if (dirent)
     {
+        kfree(dirent->d_name);
         kfree(dirent);
         dirent = NULL;
     }
 
-    if (prev_dirent)
+    if (descriptor->prev)
     {
-        kfree(prev_dirent);
-        prev_dirent = NULL;
+        kfree(descriptor->prev->d_name);
+        kfree(descriptor->prev);
+        descriptor->prev = NULL;
     }
 
 out:
-    prev_dirent = dirent;
+    descriptor->prev = dirent;
     return dirent;
 }
 
 int fat16_closedir(void *private)
 {
-    if (prev_dirent)
-    {
-        kfree(prev_dirent);
-        prev_dirent = NULL;
-    }
-
-    fat16_free_file_descriptor((struct fat_file_descriptor *)private);
+    fat16_free_dirent_descriptor((struct fat_dirent_descriptor *)private);
     return 0;
 }
